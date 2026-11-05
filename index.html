@@ -3,25 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Aura AI — Hands-Free Autonomous Voice Assistant</title>
+  <title>Nexus AI — Boss Abhishek's Personal Voice Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-dark: #030611;
-      --bg-card: rgba(10, 16, 34, 0.75);
-      --bg-card-border: rgba(0, 240, 255, 0.25);
+      --bg: #030612;
+      --card-bg: rgba(11, 17, 36, 0.78);
+      --card-border: rgba(0, 240, 255, 0.25);
       --cyan: #00F0FF;
       --emerald: #00FF9D;
       --purple: #A855F7;
       --pink: #EC4899;
-      --gold: #FFB800;
-      --flame: #F55036;
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --text: #F8FAFC;
+      --muted: #94A3B8;
+      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
@@ -34,20 +32,16 @@
 
     html, body {
       height: 100%;
-      background: var(--bg-dark);
-      color: var(--text-main);
-      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
       overflow-x: hidden;
-      touch-action: pan-y;
     }
 
-    /* Background Particle Canvas */
     #bg-canvas {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       z-index: 0;
       pointer-events: none;
     }
@@ -55,269 +49,100 @@
     .app-viewport {
       position: relative;
       z-index: 1;
-      max-width: 920px;
+      max-width: 760px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 12px 16px 28px;
+      padding: 16px 16px 24px;
     }
 
-    /* Top Navigation Bar */
+    /* Minimalist Top Bar */
     .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 18px;
-      background: rgba(8, 14, 28, 0.8);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--bg-card-border);
-      border-radius: 18px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      padding: 14px 20px;
+      background: rgba(8, 14, 28, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
 
-    .brand-group {
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
-    .brand-logo {
-      width: 38px;
-      height: 38px;
+    .brand-icon {
+      width: 40px;
+      height: 40px;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--cyan), var(--purple));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
     }
-
-    .brand-name {
+    .brand-title {
       font-weight: 800;
-      font-size: 17px;
+      font-size: 18px;
       letter-spacing: 0.5px;
       background: linear-gradient(90deg, #FFFFFF, var(--cyan), #A855F7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .voice-avatar-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(236, 72, 153, 0.12);
-      border: 1px solid rgba(236, 72, 153, 0.35);
-      padding: 4px 10px;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--pink);
-    }
-
-    /* Continuous Hands-Free Loop Status Banner */
-    .handsfree-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 16px;
-      background: linear-gradient(90deg, rgba(0, 255, 157, 0.12), rgba(0, 240, 255, 0.08));
-      border: 1px solid rgba(0, 255, 157, 0.3);
-      border-radius: 12px;
-      margin-bottom: 12px;
-      font-size: 12px;
-    }
-
-    .handsfree-indicator {
+    .boss-badge {
       display: flex;
       align-items: center;
       gap: 8px;
+      background: rgba(0, 255, 157, 0.12);
+      border: 1px solid rgba(0, 255, 157, 0.4);
+      padding: 6px 14px;
+      border-radius: 99px;
       font-family: var(--font-mono);
+      font-size: 11px;
       font-weight: 700;
       color: var(--emerald);
     }
-
-    .live-pulse-dot {
+    .boss-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--emerald);
       box-shadow: 0 0 10px var(--emerald);
-      animation: livePulse 1.4s ease-in-out infinite;
+      animation: pulseDot 1.5s infinite;
     }
-
-    @keyframes livePulse {
+    @keyframes pulseDot {
       0%, 100% { transform: scale(0.9); opacity: 0.6; }
       50% { transform: scale(1.3); opacity: 1; }
     }
 
-    .loop-toggle-btn {
-      padding: 4px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--emerald);
-      background: rgba(0, 255, 157, 0.15);
-      color: var(--emerald);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .loop-toggle-btn.paused {
-      border-color: var(--text-muted);
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    /* Built-in Music Player Mini-Bar */
-    .music-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 16px;
-      background: rgba(14, 21, 42, 0.7);
-      border: 1px solid rgba(168, 85, 247, 0.25);
-      border-radius: 14px;
-      margin-bottom: 14px;
-      transition: all 0.3s;
-    }
-    .music-bar.active {
-      border-color: var(--purple);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
-      background: rgba(22, 16, 44, 0.85);
-    }
-
-    .music-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .music-icon {
-      font-size: 18px;
-      animation: musicBeat 1s ease-in-out infinite alternate;
-    }
-    @keyframes musicBeat {
-      from { transform: scale(1); }
-      to { transform: scale(1.18); }
-    }
-    .music-title {
-      font-weight: 700;
-      font-size: 13px;
-      color: #FFFFFF;
-    }
-    .music-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .music-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .m-btn {
-      padding: 5px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.05);
-      color: #FFFFFF;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .m-btn:hover {
-      background: rgba(168, 85, 247, 0.2);
-      border-color: var(--purple);
-    }
-
-    /* Tab Switcher Navigation */
-    .tab-nav {
-      display: flex;
-      background: rgba(14, 23, 46, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 4px;
-      margin-bottom: 14px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tab-nav::-webkit-scrollbar { display: none; }
-
-    .tab-btn {
-      flex: 1;
-      min-width: 90px;
-      padding: 9px 12px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-family: var(--font-sans);
-      font-weight: 600;
-      font-size: 13px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
-      user-select: none;
-    }
-
-    .tab-btn.active {
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2));
-      color: #FFFFFF;
-      border: 1px solid rgba(0, 240, 255, 0.45);
-      box-shadow: 0 4px 16px rgba(0, 240, 255, 0.2);
-    }
-
-    /* Views Container & Slide Transitions */
-    .views-wrapper {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      min-height: 540px;
-    }
-
-    .view-screen {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      transform: translateX(50px);
-      pointer-events: none;
-      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .view-screen.active {
-      opacity: 1;
-      transform: translateX(0px);
-      pointer-events: all;
-      position: relative;
-    }
-
-    .terminal-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
+    /* Main Voice Assistant Terminal Card */
+    .assistant-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 24px;
       display: flex;
       flex-direction: column;
       flex: 1;
-      padding: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      padding: 24px 20px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+      position: relative;
     }
 
     /* 3D Voice Orb */
     .orb-stage {
       position: relative;
       width: 100%;
-      height: 170px;
+      height: 180px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -326,11 +151,11 @@
     }
 
     .orb-core {
-      width: 86px;
-      height: 86px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #00F0FF, #7928CA 60%, #030611);
-      box-shadow: 0 0 34px rgba(0, 240, 255, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.4);
+      background: radial-gradient(circle at 35% 35%, #00F0FF, #7928CA 60%, #030612);
+      box-shadow: 0 0 36px rgba(0, 240, 255, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.4);
       position: relative;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -345,19 +170,19 @@
       border: 1px solid rgba(0, 240, 255, 0.35);
       animation: orbSpin 7s linear infinite;
     }
-    .orb-ring.r1 { width: 118px; height: 118px; border-top-color: var(--cyan); }
-    .orb-ring.r2 { width: 148px; height: 148px; border-bottom-color: var(--pink); animation-duration: 10s; animation-direction: reverse; }
+    .orb-ring.r1 { width: 122px; height: 122px; border-top-color: var(--cyan); }
+    .orb-ring.r2 { width: 154px; height: 154px; border-bottom-color: var(--pink); animation-duration: 10s; animation-direction: reverse; }
 
     body.listening .orb-core {
-      transform: scale(1.15);
-      box-shadow: 0 0 55px rgba(0, 255, 157, 0.85), inset 0 0 24px #FFFFFF;
-      background: radial-gradient(circle at 35% 35%, #00FF9D, #00B4D8 60%, #030611);
+      transform: scale(1.16);
+      box-shadow: 0 0 60px rgba(0, 255, 157, 0.85), inset 0 0 24px #FFFFFF;
+      background: radial-gradient(circle at 35% 35%, #00FF9D, #00B4D8 60%, #030612);
     }
 
     body.speaking .orb-core {
-      transform: scale(1.14);
-      box-shadow: 0 0 55px rgba(236, 72, 153, 0.85), inset 0 0 24px #FFFFFF;
-      background: radial-gradient(circle at 35% 35%, #F472B6, #A855F7 60%, #030611);
+      transform: scale(1.15);
+      box-shadow: 0 0 60px rgba(236, 72, 153, 0.85), inset 0 0 24px #FFFFFF;
+      background: radial-gradient(circle at 35% 35%, #F472B6, #A855F7 60%, #030612);
     }
 
     @keyframes orbSpin {
@@ -365,44 +190,103 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Real-Time Audio Equalizer Waveform */
+    /* Live Equalizer Waveform */
     .waveform-visualizer {
       display: flex;
       align-items: center;
       gap: 3.5px;
       height: 26px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
     .wave-bar {
       width: 4px;
-      height: 5px;
+      height: 6px;
       border-radius: 2px;
       background: var(--cyan);
       transition: height 0.08s ease, background-color 0.2s;
+    }
+
+    /* YouTube Embedded Player Card (Interactive Voice Controlled) */
+    .yt-container {
+      display: none;
+      background: rgba(14, 21, 44, 0.9);
+      border: 1px solid rgba(255, 0, 0, 0.4);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 30px rgba(255, 0, 0, 0.2);
+      animation: fadeIn 0.35s ease;
+    }
+    .yt-container.active { display: block; }
+
+    .yt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .yt-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .yt-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid rgba(255, 0, 0, 0.4);
+      color: #FF4D4D;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .yt-frame-wrapper {
+      position: relative;
+      padding-bottom: 45%;
+      height: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000000;
+    }
+    .yt-frame-wrapper iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    .yt-voice-tip {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 8px;
+      text-align: center;
     }
 
     /* Dialog Feed */
     .dialog-stream {
       flex: 1;
       overflow-y: auto;
-      max-height: 240px;
+      max-height: 280px;
       padding: 10px 4px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       scrollbar-width: thin;
       scrollbar-color: rgba(0, 240, 255, 0.2) transparent;
+      margin-bottom: 12px;
     }
 
     .msg-bubble {
       max-width: 85%;
-      padding: 10px 14px;
-      border-radius: 14px;
+      padding: 12px 16px;
+      border-radius: 16px;
       font-size: 14px;
-      line-height: 1.45;
+      line-height: 1.5;
       animation: msgPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
     @keyframes msgPop {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
@@ -428,45 +312,29 @@
       align-self: center;
       font-family: var(--font-mono);
       font-size: 11px;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.04);
-      padding: 4px 12px;
+      color: var(--emerald);
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      padding: 4px 14px;
       border-radius: 99px;
     }
 
-    /* Proactive Suggestion Pill */
-    .proactive-pill {
-      align-self: flex-start;
-      margin-top: -4px;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px dashed var(--cyan);
-      border-radius: 10px;
-      padding: 6px 12px;
-      font-size: 12px;
-      color: var(--cyan);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      animation: msgPop 0.3s ease;
-    }
-
-    /* Prompt Chips Carousel */
+    /* Quick Prompts Carousel */
     .prompt-chips {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 8px 2px;
-      margin-bottom: 6px;
+      padding: 6px 2px 10px;
       scrollbar-width: none;
     }
     .prompt-chips::-webkit-scrollbar { display: none; }
 
     .chip-btn {
-      padding: 6px 12px;
+      padding: 7px 14px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 99px;
-      color: var(--text-muted);
+      color: var(--muted);
       font-size: 12px;
       white-space: nowrap;
       cursor: pointer;
@@ -478,39 +346,38 @@
       border-color: var(--cyan);
     }
 
-    /* Controls */
+    /* Controls Bar */
     .controls-row {
       display: flex;
       gap: 10px;
       align-items: center;
-      margin-top: 6px;
     }
 
     .text-input {
       flex: 1;
-      padding: 13px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(8, 13, 26, 0.85);
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(8, 13, 26, 0.9);
       color: #FFFFFF;
-      font-family: var(--font-sans);
+      font-family: var(--font);
       font-size: 14px;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .text-input:focus {
       border-color: var(--cyan);
-      box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.25);
     }
 
     .voice-cta-btn {
-      width: 52px;
-      height: 52px;
+      width: 54px;
+      height: 54px;
       border-radius: 16px;
       border: none;
       background: linear-gradient(135deg, var(--cyan), var(--purple));
-      color: #030611;
-      font-size: 20px;
+      color: #030612;
+      font-size: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -523,110 +390,21 @@
 
     body.listening .voice-cta-btn {
       background: linear-gradient(135deg, var(--emerald), #00A3FF);
-      box-shadow: 0 0 24px rgba(0, 255, 157, 0.6);
+      box-shadow: 0 0 28px rgba(0, 255, 157, 0.7);
       animation: pulseMic 1.2s infinite;
     }
-
     @keyframes pulseMic {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.08); }
     }
 
-    /* Directory Tab */
-    .dir-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
-      overflow-y: auto;
-      padding: 4px;
-    }
-
-    .cmd-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 16px;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .cmd-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--cyan);
-      box-shadow: 0 8px 24px rgba(0, 240, 255, 0.15);
-    }
-
-    .cmd-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cmd-title { font-weight: 700; font-size: 14px; color: #FFFFFF; }
-    .cmd-badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: rgba(0, 240, 255, 0.1);
-      color: var(--cyan);
-    }
-    .cmd-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-    .cmd-sample { font-family: var(--font-mono); font-size: 11px; color: var(--emerald); }
-
-    /* Knowledge Base & Telemetry */
-    .kb-view, .engine-view {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex: 1;
-    }
-    .kb-search-box {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(8, 13, 26, 0.85);
-      color: #FFFFFF;
-      font-family: var(--font-sans);
-    }
-    .kb-json-container {
-      flex: 1;
-      background: #050814;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 14px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: #38BDF8;
-      overflow-y: auto;
-      max-height: 480px;
-      line-height: 1.5;
-    }
-
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-    .stat-box {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 16px;
-    }
-    .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-    .stat-val { font-size: 18px; font-weight: 800; color: var(--cyan); font-family: var(--font-mono); }
-
     @media (max-width: 600px) {
       .app-viewport { padding: 8px 12px 18px; }
       .orb-stage { height: 140px; }
-      .orb-core { width: 74px; height: 74px; }
-      .orb-ring.r1 { width: 100px; height: 100px; }
-      .orb-ring.r2 { width: 126px; height: 126px; }
-      .tab-btn { font-size: 11px; padding: 8px 8px; }
-      .dialog-stream { max-height: 190px; }
+      .orb-core { width: 76px; height: 76px; }
+      .orb-ring.r1 { width: 104px; height: 104px; }
+      .orb-ring.r2 { width: 132px; height: 132px; }
+      .dialog-stream { max-height: 220px; }
     }
   </style>
 </head>
@@ -636,503 +414,134 @@
 
   <div class="app-viewport">
     
-    <!-- Top Header -->
+    <!-- Top Bar -->
     <header class="top-bar">
-      <div class="brand-group">
-        <div class="brand-logo">✨</div>
+      <div class="brand">
+        <div class="brand-icon">✨</div>
         <div>
-          <h1 class="brand-name">Aura AI</h1>
-          <p style="font-size: 11px; color: var(--text-muted);">Autonomous Conversational Voice Agent</p>
+          <h1 class="brand-title">Nexus AI</h1>
+          <p style="font-size: 11px; color: var(--muted);">Boss Abhishek's Voice Assistant</p>
         </div>
       </div>
-      <div class="voice-avatar-badge">
-        <span>👩‍🦰 Female Voice: Active</span>
+      <div class="boss-badge">
+        <span class="boss-dot"></span>
+        <span>BOSS: ABHISHEK</span>
       </div>
     </header>
 
-    <!-- Continuous Hands-Free Listening Loop Status Bar -->
-    <div class="handsfree-bar">
-      <div class="handsfree-indicator">
-        <span class="live-pulse-dot" id="loopDot"></span>
-        <span id="loopStatus">HANDS-FREE LOOP: LIVE &amp; LISTENING</span>
-      </div>
-      <button class="loop-toggle-btn" id="loopToggleBtn" onclick="toggleHandsFreeLoop()">PAUSE LOOP</button>
-    </div>
-
-    <!-- Built-in Voice Music Player Mini-Bar -->
-    <div class="music-bar" id="musicBar">
-      <div class="music-info">
-        <div class="music-icon" id="musicIcon">🎵</div>
-        <div>
-          <div class="music-title" id="trackTitle">Ambient Cyber Beats</div>
-          <div class="music-sub" id="trackStatus">Voice Commands: "Play music", "Pause", "Next track"</div>
-        </div>
-      </div>
-      <div class="music-controls">
-        <button class="m-btn" onclick="prevTrack()" title="Previous Track">⏮️</button>
-        <button class="m-btn" id="playPauseBtn" onclick="toggleMusicPlayback()" title="Play / Pause">▶️ Play</button>
-        <button class="m-btn" onclick="nextTrack()" title="Next Track">⏭️</button>
-      </div>
-    </div>
-
-    <!-- Navigation / Directory Switcher Tabs -->
-    <nav class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab(0)">🎙️ Voice Terminal</button>
-      <button class="tab-btn" onclick="switchTab(1)">📂 Apps &amp; Commands</button>
-      <button class="tab-btn" onclick="switchTab(2)">🧠 Knowledge</button>
-      <button class="tab-btn" onclick="switchTab(3)">⚡ Diagnostics</button>
-    </nav>
-
-    <!-- Views Container (Supports Swipe Gestures) -->
-    <div class="views-wrapper" id="viewsContainer">
+    <!-- Main Voice Assistant Card -->
+    <main class="assistant-card">
       
-      <!-- SCREEN 0: VOICE TERMINAL -->
-      <section class="view-screen active" id="view-0">
-        <div class="terminal-card">
-          
-          <!-- 3D Voice Orb Stage -->
-          <div class="orb-stage">
-            <div class="orb-ring r1"></div>
-            <div class="orb-ring r2"></div>
-            <div class="orb-core" id="orbCore" onclick="manualMicTrigger()" title="Hands-Free Active — Tap for instant pulse">
-              <span style="font-size: 28px;" id="orbIcon">✨</span>
-            </div>
-            
-            <div class="waveform-visualizer" id="waveContainer"></div>
-          </div>
-
-          <!-- Dialog Stream -->
-          <div class="dialog-stream" id="dialogStream">
-            <div class="msg-sys">Hands-free voice loop is active. Speak anytime without clicking the mic.</div>
-            <div class="msg-bubble msg-agent">Hi Abhishek! I'm Aura, your female AI voice companion. My microphone is running continuously in the background. Say "open YouTube", "play music", or ask me any question!</div>
-          </div>
-
-          <!-- Quick Prompts Carousel -->
-          <div class="prompt-chips">
-            <button class="chip-btn" onclick="sendPrompt('Open YouTube')">▶️ Open YouTube</button>
-            <button class="chip-btn" onclick="sendPrompt('Play music')">🎵 Play Music</button>
-            <button class="chip-btn" onclick="sendPrompt('Open Spotify')">🎧 Open Spotify</button>
-            <button class="chip-btn" onclick="sendPrompt('Calculate 450 times 12')">🔢 Calculate 450 × 12</button>
-            <button class="chip-btn" onclick="sendPrompt('Open GitHub')">🐙 Open GitHub</button>
-            <button class="chip-btn" onclick="sendPrompt('Who are you?')">✨ Who are you?</button>
-          </div>
-
-          <!-- Input Controls -->
-          <div class="controls-row">
-            <input type="text" class="text-input" id="cmdInput" placeholder="Hands-free active — speak now or type here..." onkeydown="if(event.key==='Enter') sendTextCmd()" />
-            <button class="voice-cta-btn" id="micBtn" onclick="manualMicTrigger()" aria-label="Microphone">🎙️</button>
-          </div>
-
+      <!-- 3D Voice Orb -->
+      <div class="orb-stage">
+        <div class="orb-ring r1"></div>
+        <div class="orb-ring r2"></div>
+        <div class="orb-core" id="orbCore" onclick="manualTrigger()" title="Continuous Listening Active">
+          <span style="font-size: 32px;" id="orbIcon">✨</span>
         </div>
-      </section>
+        
+        <div class="waveform-visualizer" id="waveContainer"></div>
+      </div>
 
-      <!-- SCREEN 1: APPS & COMMAND DIRECTORY -->
-      <section class="view-screen" id="view-1">
-        <div class="terminal-card" style="overflow-y: auto;">
-          <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--cyan);">📂 Universal App &amp; Voice Controller</h2>
-          <div class="dir-grid" id="dirGrid"></div>
-        </div>
-      </section>
-
-      <!-- SCREEN 2: KNOWLEDGE BASE -->
-      <section class="view-screen" id="view-2">
-        <div class="terminal-card kb-view">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="font-size: 16px; color: var(--purple);">🧠 Contextual Intent Knowledge Base</h2>
-            <span style="font-size: 12px; color: var(--emerald);" id="intentCountBadge">Intents Loaded</span>
+      <!-- YouTube Voice Player (Auto-Loads & Responds to Voice) -->
+      <div class="yt-container" id="ytContainer">
+        <div class="yt-header">
+          <div class="yt-title">
+            <span>▶️ YouTube Voice Player</span>
           </div>
-          <input type="text" class="kb-search-box" id="kbFilterInput" placeholder="Filter intent patterns..." oninput="filterKB()" />
-          <pre class="kb-json-container" id="kbDisplay"></pre>
+          <span class="yt-badge" id="ytStatusBadge">VOICE READY</span>
         </div>
-      </section>
-
-      <!-- SCREEN 3: TELEMETRY -->
-      <section class="view-screen" id="view-3">
-        <div class="terminal-card engine-view">
-          <h2 style="font-size: 16px; color: var(--emerald);">⚡ Pipeline Diagnostics</h2>
-          
-          <div class="stat-row">
-            <div class="stat-box">
-              <div class="stat-label">SYNTHESIS VOICE</div>
-              <div class="stat-val" style="color: var(--pink);">NATURAL FEMALE</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">MIC LISTEN MODE</div>
-              <div class="stat-val" style="color: var(--emerald);">CONTINUOUS LOOP</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">MUSIC ENGINE</div>
-              <div class="stat-val" style="color: var(--purple);">VOICE CONTROLLED</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">CONTEXT MEMORY</div>
-              <div class="stat-val" style="color: var(--cyan);">PROACTIVE AGENT</div>
-            </div>
-          </div>
-
-          <div class="stat-box" style="margin-top: 8px;">
-            <div class="stat-label">HANDS-FREE INSTRUCTIONS</div>
-            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-top: 6px;">
-              • <b>Continuous Loop</b>: The assistant auto-restarts listening after each sentence. You don't need to click anything.<br/>
-              • <b>Echo Cancellation</b>: When Aura speaks, listening is automatically suspended to avoid self-echo, and resumes the millisecond she stops speaking.<br/>
-              • <b>Proactive Suggestions</b>: Saying <i>"Open YouTube"</i> opens YouTube and immediately asks: <i>"What would you like me to play or search next?"</i> — then executes your follow-up!
-            </p>
-          </div>
+        <div class="yt-frame-wrapper" id="ytFrameWrapper">
+          <div id="player"></div>
         </div>
-      </section>
+        <div class="yt-voice-tip">
+          🎙️ Voice Controls: <i>"Pause"</i>, <i>"Play / Resume"</i>, <i>"Play [Song Name]"</i>
+        </div>
+      </div>
 
-    </div>
+      <!-- Live Dialogue Stream -->
+      <div class="dialog-stream" id="dialogStream">
+        <div class="msg-sys">Hands-free loop online. Speak naturally without touching anything.</div>
+        <div class="msg-bubble msg-agent">Hi Boss Abhishek! I'm your personal voice assistant, built and engineered by you. I'm listening continuously. Say "open YouTube", "play music", or ask me anything!</div>
+      </div>
+
+      <!-- Quick Action Prompt Chips -->
+      <div class="prompt-chips">
+        <button class="chip-btn" onclick="sendPrompt('Open YouTube')">▶️ Open YouTube</button>
+        <button class="chip-btn" onclick="sendPrompt('Play Believer on YouTube')">🎵 Play Believer</button>
+        <button class="chip-btn" onclick="sendPrompt('Play lofi chill beats')">☕ Play Lo-Fi Beats</button>
+        <button class="chip-btn" onclick="sendPrompt('Who is your boss?')">👑 Who is your boss?</button>
+        <button class="chip-btn" onclick="sendPrompt('Who developed you?')">🛠️ Who developed you?</button>
+        <button class="chip-btn" onclick="sendPrompt('What is my name?')">👤 What is my name?</button>
+      </div>
+
+      <!-- Bottom Input Row -->
+      <div class="controls-row">
+        <input type="text" class="text-input" id="cmdInput" placeholder="Listening in hands-free loop... (or type here)" onkeydown="if(event.key==='Enter') sendTextCmd()" />
+        <button class="voice-cta-btn" id="micBtn" onclick="manualTrigger()" aria-label="Microphone">🎙️</button>
+      </div>
+
+    </main>
 
   </div>
 
+  <!-- YouTube IFrame API Script -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <script>
-    // Embedded Knowledge Base
-    const KNOWLEDGE_BASE = {
-  "intents": [
-    {
-      "id": "identity",
-      "priority": 100,
-      "kind": "info",
-      "patterns": [
-        "who are you",
-        "what are you",
-        "your name",
-        "introduce yourself",
-        "what is your name"
-      ],
-      "response": "I'm your voice assistant \u2014 a small Python service that listens for spoken commands, looks them up in a knowledge base, and responds with text and speech. I can tell you the time and date, open websites, run searches, and answer common questions. How can I help?"
-    },
-    {
-      "id": "capabilities",
-      "priority": 95,
-      "kind": "info",
-      "patterns": [
-        "what can you do",
-        "your capabilities",
-        "help me",
-        "what do you do",
-        "how can you help"
-      ],
-      "response": "I can help with a few things: tell you the current time or date, open websites like Google, YouTube, GitHub, Gmail, Maps, and Wikipedia, run web searches, and answer general questions from my knowledge base. Just speak naturally \u2014 for example, \"what time is it\" or \"search for python tutorials\"."
-    },
-    {
-      "id": "greeting",
-      "kind": "smalltalk",
-      "patterns": [
-        "hello",
-        "hi",
-        "hey",
-        "greetings",
-        "good morning",
-        "good afternoon",
-        "good evening"
-      ],
-      "response": [
-        "Hello. How can I help you today?",
-        "Hi there. What can I do for you?",
-        "Good to hear from you. What do you need?"
-      ]
-    },
-    {
-      "id": "thanks",
-      "kind": "smalltalk",
-      "patterns": [
-        "thank you",
-        "thanks",
-        "thanks a lot",
-        "appreciate it",
-        "cheers"
-      ],
-      "response": [
-        "You're welcome.",
-        "Happy to help.",
-        "Anytime."
-      ]
-    },
-    {
-      "id": "how_are_you",
-      "kind": "smalltalk",
-      "patterns": [
-        "how are you",
-        "how are you doing",
-        "how's it going",
-        "how do you feel"
-      ],
-      "response": "I'm operating normally \u2014 thanks for asking. What can I help you with?"
-    },
-    {
-      "id": "compliment",
-      "kind": "smalltalk",
-      "patterns": [
-        "good job",
-        "well done",
-        "nice work",
-        "you are smart",
-        "you're smart",
-        "clever"
-      ],
-      "response": [
-        "Thank you. I appreciate that.",
-        "Glad I could help."
-      ]
-    },
-    {
-      "id": "apology",
-      "kind": "smalltalk",
-      "patterns": [
-        "sorry",
-        "my bad",
-        "apologies"
-      ],
-      "response": "No problem at all. What would you like to do next?"
-    },
-    {
-      "id": "capital_france",
-      "kind": "info",
-      "patterns": [
-        "capital of france",
-        "what is the capital of france"
-      ],
-      "response": "The capital of France is Paris."
-    },
-    {
-      "id": "capital_japan",
-      "kind": "info",
-      "patterns": [
-        "capital of japan",
-        "what is the capital of japan"
-      ],
-      "response": "The capital of Japan is Tokyo."
-    },
-    {
-      "id": "capital_india",
-      "kind": "info",
-      "patterns": [
-        "capital of india",
-        "what is the capital of india"
-      ],
-      "response": "The capital of India is New Delhi."
-    },
-    {
-      "id": "largest_planet",
-      "kind": "info",
-      "patterns": [
-        "largest planet",
-        "biggest planet",
-        "what is the largest planet"
-      ],
-      "response": "Jupiter is the largest planet in our solar system."
-    },
-    {
-      "id": "python_language",
-      "kind": "info",
-      "patterns": [
-        "what is python",
-        "tell me about python",
-        "python programming"
-      ],
-      "response": "Python is a high-level, general-purpose programming language known for its readable syntax and large standard library. It's widely used in web development, data science, automation, and scripting."
-    },
-    {
-      "id": "meaning_of_life",
-      "kind": "smalltalk",
-      "patterns": [
-        "meaning of life",
-        "why are we here",
-        "purpose of life"
-      ],
-      "response": "42. But you may want a more philosophical source than me."
-    },
-    {
-      "id": "open_google",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open google",
-        "google",
-        "go to google"
-      ],
-      "url": "https://www.google.com",
-      "response": "Opening Google."
-    },
-    {
-      "id": "open_youtube",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open youtube",
-        "youtube",
-        "go to youtube"
-      ],
-      "url": "https://www.youtube.com",
-      "response": "Opening YouTube."
-    },
-    {
-      "id": "open_github",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open github",
-        "github",
-        "go to github"
-      ],
-      "url": "https://github.com",
-      "response": "Opening GitHub."
-    },
-    {
-      "id": "open_chatgpt",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open chatgpt",
-        "chatgpt",
-        "open openai",
-        "openai"
-      ],
-      "url": "https://chat.openai.com",
-      "response": "Opening ChatGPT."
-    },
-    {
-      "id": "open_gmail",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open gmail",
-        "gmail",
-        "open mail",
-        "check email"
-      ],
-      "url": "https://mail.google.com",
-      "response": "Opening Gmail."
-    },
-    {
-      "id": "open_maps",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open maps",
-        "google maps",
-        "maps"
-      ],
-      "url": "https://maps.google.com",
-      "response": "Opening Google Maps."
-    },
-    {
-      "id": "open_wikipedia",
-      "kind": "site",
-      "priority": 70,
-      "patterns": [
-        "open wikipedia",
-        "wikipedia"
-      ],
-      "url": "https://www.wikipedia.org",
-      "response": "Opening Wikipedia."
-    },
-    {
-      "id": "search_web",
-      "kind": "search",
-      "priority": 60,
-      "patterns": [
-        "search",
-        "search for",
-        "google",
-        "look up",
-        "find"
-      ],
-      "response": "Searching the web."
-    },
-    {
-      "id": "time",
-      "kind": "action",
-      "priority": 80,
-      "patterns": [
-        "time",
-        "what time",
-        "what is the time",
-        "current time",
-        "the time",
-        "clock"
-      ],
-      "response": "__DYNAMIC_TIME__"
-    },
-    {
-      "id": "date",
-      "kind": "action",
-      "priority": 80,
-      "patterns": [
-        "date",
-        "what date",
-        "what is the date",
-        "today's date",
-        "what day is it",
-        "the date"
-      ],
-      "response": "__DYNAMIC_DATE__"
-    },
-    {
-      "id": "exit",
-      "priority": 200,
-      "kind": "action",
-      "patterns": [
-        "exit",
-        "quit",
-        "goodbye",
-        "bye",
-        "stop",
-        "shut down",
-        "shutdown"
-      ],
-      "response": "Goodbye. Have a productive day."
-    }
-  ]
-};
+    // Developer & Boss Identity
+    const DEVELOPER = "Abhishek";
+    const BOSS = "Boss Abhishek";
 
-    // Extended Universal Apps Directory
-    const APPS_DIRECTORY = [
-      { id: "youtube", name: "YouTube", icon: "▶️", url: "https://www.youtube.com", sample: "Open YouTube", followUp: "Opening YouTube! What would you like to search, or should I play a specific song?" },
-      { id: "spotify", name: "Spotify", icon: "🎧", url: "https://open.spotify.com", sample: "Open Spotify", followUp: "Spotify is open! Which artist, song, or playlist should we listen to?" },
-      { id: "google", name: "Google Search", icon: "🔍", url: "https://www.google.com", sample: "Open Google", followUp: "Google is open! What topic or question would you like to search?" },
-      { id: "github", name: "GitHub", icon: "🐙", url: "https://github.com", sample: "Open GitHub", followUp: "GitHub opened! Would you like to search for a repository or check your profile?" },
-      { id: "chatgpt", name: "ChatGPT", icon: "🤖", url: "https://chat.openai.com", sample: "Open ChatGPT", followUp: "ChatGPT is ready. What prompt would you like to explore?" },
-      { id: "maps", name: "Google Maps", icon: "🗺️", url: "https://maps.google.com", sample: "Open Maps", followUp: "Google Maps is open! Where are we navigating to?" },
-      { id: "gmail", name: "Gmail", icon: "✉️", url: "https://mail.google.com", sample: "Open Gmail", followUp: "Opening your inbox. Do you need to compose a new mail?" },
-      { id: "whatsapp", name: "WhatsApp Web", icon: "💬", url: "https://web.whatsapp.com", sample: "Open WhatsApp", followUp: "WhatsApp Web is open! Who would you like to message?" },
-      { id: "twitter", name: "Twitter / X", icon: "🐦", url: "https://x.com", sample: "Open Twitter", followUp: "Twitter is open! What trending topic or creator shall we check?" },
-      { id: "linkedin", name: "LinkedIn", icon: "💼", url: "https://www.linkedin.com", sample: "Open LinkedIn", followUp: "LinkedIn is open! Ready to check jobs or connect?" },
-      { id: "reddit", name: "Reddit", icon: "👽", url: "https://www.reddit.com", sample: "Open Reddit", followUp: "Reddit opened! What community or discussion are you looking for?" },
-      { id: "amazon", name: "Amazon", icon: "📦", url: "https://www.amazon.com", sample: "Open Amazon", followUp: "Amazon opened! What product would you like to search for?" },
-      { id: "music", name: "Music Controller", icon: "🎵", sample: "Play music", followUp: "Playing ambient cyber beats. Say 'Pause' or 'Next track' anytime!" },
-      { id: "calculator", name: "Math Solver", icon: "🔢", sample: "Calculate 250 times 14", followUp: "I can solve any math expression directly on voice!" }
-    ];
+    // YouTube Player State
+    let ytPlayer = null;
+    let ytReady = false;
+    let isYtPlaying = false;
+    let waitingForYoutubeQuery = false;
 
-    let currentTab = 0;
-    const views = document.querySelectorAll('.view-screen');
-    const tabs = document.querySelectorAll('.tab-btn');
-
-    function switchTab(index) {
-      currentTab = index;
-      tabs.forEach((t, i) => t.classList.toggle('active', i === index));
-      views.forEach((v, i) => v.classList.toggle('active', i === index));
-      if (navigator.vibrate) navigator.vibrate(15);
+    function onYouTubeIframeAPIReady() {
+      ytPlayer = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: 'jfKfPfyJRdk', // Default soothing lofi stream
+        playerVars: {
+          'autoplay': 0,
+          'controls': 1,
+          'modestbranding': 1,
+          'rel': 0
+        },
+        events: {
+          'onReady': () => { ytReady = true; },
+          'onStateChange': (e) => {
+            if (e.data === YT.PlayerState.PLAYING) {
+              isYtPlaying = true;
+              document.getElementById('ytStatusBadge').textContent = 'PLAYING';
+              document.getElementById('ytStatusBadge').style.color = '#00FF9D';
+            } else if (e.data === YT.PlayerState.PAUSED) {
+              isYtPlaying = false;
+              document.getElementById('ytStatusBadge').textContent = 'PAUSED';
+              document.getElementById('ytStatusBadge').style.color = '#FFB800';
+            }
+          }
+        }
+      });
     }
 
-    // Swipe Gesture Navigation
-    let touchStartX = 0, touchEndX = 0;
-    const container = document.getElementById('viewsContainer');
-    container.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    container.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchEndX - touchStartX;
-      if (Math.abs(diff) > 50) {
-        if (diff < 0 && currentTab < views.length - 1) switchTab(currentTab + 1);
-        else if (diff > 0 && currentTab > 0) switchTab(currentTab - 1);
+    function playYouTubeVideoId(videoId, title = "YouTube Video") {
+      document.getElementById('ytContainer').classList.add('active');
+      if (ytPlayer && ytPlayer.loadVideoById) {
+        ytPlayer.loadVideoById(videoId);
+        ytPlayer.playVideo();
+      } else {
+        document.getElementById('ytFrameWrapper').innerHTML = 
+          `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="autoplay" allowfullscreen></iframe>`;
       }
-    }, { passive: true });
+    }
 
     // Waveform Setup
     const waveContainer = document.getElementById('waveContainer');
     const waveBars = [];
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 22; i++) {
       const bar = document.createElement('div');
       bar.className = 'wave-bar';
       waveContainer.appendChild(bar);
@@ -1140,85 +549,105 @@
     }
 
     // ============================================================
-    //  FEMALE VOICE SYNTHESIS ENGINE
+    //  HUMAN-LIKE NATURAL FEMALE VOICE SYNTHESIS
     // ============================================================
-    let femaleVoice = null;
-    function pickFemaleVoice() {
+    let naturalFemaleVoice = null;
+
+    function selectNaturalVoice() {
       if (!window.speechSynthesis) return;
       const voices = window.speechSynthesis.getVoices();
       if (!voices || voices.length === 0) return;
 
-      // Find best natural female voice
-      femaleVoice = voices.find(v => 
+      // Prioritize modern high-fidelity Natural / Neural Female voices
+      naturalFemaleVoice = voices.find(v => 
+        (v.name.includes("Natural") && v.name.includes("Female")) ||
+        v.name.includes("Jenny") ||
+        v.name.includes("Aria") ||
         (v.name.includes("Google") && v.name.includes("US English")) ||
-        v.name.includes("Zira") ||
         v.name.includes("Samantha") ||
         v.name.includes("Victoria") ||
-        v.name.includes("Karen") ||
-        v.name.includes("Natural") ||
+        v.name.includes("Zira") ||
         v.name.toLowerCase().includes("female")
       ) || voices[0];
     }
 
     if (window.speechSynthesis) {
-      window.speechSynthesis.onvoiceschanged = pickFemaleVoice;
-      pickFemaleVoice();
+      window.speechSynthesis.onvoiceschanged = selectNaturalVoice;
+      selectNaturalVoice();
     }
 
-    function speakFemaleVoice(text, onComplete = null) {
+    // Human-like Speech Delivery with Natural Breathing Gaps
+    function speakHuman(text, onComplete = null) {
       if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
 
-      // Temporarily pause recognition to prevent hearing itself
+      // Temporarily suspend recognition so the mic doesn't catch the speaker audio
       if (recognition && isListening) {
         try { recognition.abort(); } catch(e){}
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (!femaleVoice) pickFemaleVoice();
-      if (femaleVoice) utterance.voice = femaleVoice;
-      utterance.pitch = 1.15; // Natural clear female pitch
-      utterance.rate = 1.02;
+      // Break text into natural human conversational clauses for lifelike breathing pauses
+      const sentences = text.match(/[^.!?]+[.!?]+|\S+/g) || [text];
+      let idx = 0;
 
-      utterance.onstart = () => {
-        isSpeaking = true;
-        document.body.classList.add('speaking');
-        document.getElementById('orbIcon').textContent = '✨';
-        animateSpeakingBars();
-      };
-
-      utterance.onend = () => {
-        isSpeaking = false;
-        document.body.classList.remove('speaking');
-        document.getElementById('orbIcon').textContent = '🎙️';
-        resetWaveBars();
-
-        // Resume continuous listening loop immediately
-        if (handsFreeActive) {
-          startRecognitionSafe();
+      function speakNextClause() {
+        if (idx >= sentences.length) {
+          isSpeaking = false;
+          document.body.classList.remove('speaking');
+          document.getElementById('orbIcon').textContent = '🎙️';
+          resetBars();
+          if (handsFreeActive) startLoop();
+          if (onComplete) onComplete();
+          return;
         }
-        if (onComplete) onComplete();
-      };
 
-      utterance.onerror = () => {
-        isSpeaking = false;
-        document.body.classList.remove('speaking');
-        if (handsFreeActive) startRecognitionSafe();
-      };
+        const clause = sentences[idx].trim();
+        idx++;
+        if (!clause) {
+          speakNextClause();
+          return;
+        }
 
-      window.speechSynthesis.speak(utterance);
+        const utterance = new SpeechSynthesisUtterance(clause);
+        if (!naturalFemaleVoice) selectNaturalVoice();
+        if (naturalFemaleVoice) utterance.voice = naturalFemaleVoice;
+
+        // Human prosody: slight pitch variation, natural pace (0.98), never robotic
+        utterance.pitch = 1.08;
+        utterance.rate = 0.98;
+
+        utterance.onstart = () => {
+          isSpeaking = true;
+          document.body.classList.add('speaking');
+          document.getElementById('orbIcon').textContent = '✨';
+          animateBars();
+        };
+
+        utterance.onend = () => {
+          // Human breathing gap between sentences (120ms pause)
+          setTimeout(speakNextClause, 120);
+        };
+
+        utterance.onerror = () => {
+          speakNextClause();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      speakNextClause();
     }
 
-    function animateSpeakingBars() {
+    function animateBars() {
       if (!isSpeaking) return;
       waveBars.forEach(b => {
-        b.style.height = (Math.random() * 26 + 4) + 'px';
+        b.style.height = (Math.random() * 24 + 4) + 'px';
       });
-      setTimeout(animateSpeakingBars, 80);
+      setTimeout(animateBars, 80);
     }
 
-    function resetWaveBars() {
-      waveBars.forEach(b => b.style.height = '5px');
+    function resetBars() {
+      waveBars.forEach(b => b.style.height = '6px');
     }
 
     // ============================================================
@@ -1228,7 +657,6 @@
     let isListening = false;
     let isSpeaking = false;
     let recognition = null;
-    let lastContextApp = null; // Memory of what app was just opened
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -1241,17 +669,15 @@
         isListening = true;
         document.body.classList.add('listening');
         document.getElementById('orbIcon').textContent = '👂';
-        document.getElementById('loopDot').style.background = 'var(--emerald)';
-        document.getElementById('loopStatus').textContent = 'HANDS-FREE LOOP: LISTENING (SPEAK NOW)';
       };
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         addMessage(transcript, 'user');
-        handleOmniCommand(transcript);
+        handleBossCommand(transcript);
       };
 
-      recognition.onerror = (event) => {
+      recognition.onerror = () => {
         isListening = false;
         document.body.classList.remove('listening');
       };
@@ -1259,183 +685,183 @@
       recognition.onend = () => {
         isListening = false;
         document.body.classList.remove('listening');
-        // Auto-restart loop if still active and not currently speaking
         if (handsFreeActive && !isSpeaking) {
-          setTimeout(startRecognitionSafe, 250);
+          setTimeout(startLoop, 200);
         }
       };
     }
 
-    function startRecognitionSafe() {
+    function startLoop() {
       if (!recognition || !handsFreeActive || isSpeaking) return;
       try {
         recognition.start();
-      } catch(e) {
-        // Recognition already running or recovering
-      }
+      } catch(e){}
     }
 
-    function toggleHandsFreeLoop() {
-      handsFreeActive = !handsFreeActive;
-      const btn = document.getElementById('loopToggleBtn');
-      const status = document.getElementById('loopStatus');
-      const dot = document.getElementById('loopDot');
-
-      if (handsFreeActive) {
-        btn.textContent = 'PAUSE LOOP';
-        btn.classList.remove('paused');
-        status.textContent = 'HANDS-FREE LOOP: LIVE & LISTENING';
-        dot.style.background = 'var(--emerald)';
-        startRecognitionSafe();
-      } else {
-        btn.textContent = 'RESUME LOOP';
-        btn.classList.add('paused');
-        status.textContent = 'HANDS-FREE LOOP: PAUSED';
-        dot.style.background = 'var(--text-muted)';
-        if (recognition) {
-          try { recognition.abort(); } catch(e){}
-        }
-        isListening = false;
-        document.body.classList.remove('listening');
-      }
-    }
-
-    function manualMicTrigger() {
-      if (!handsFreeActive) {
-        toggleHandsFreeLoop();
-      } else {
-        startRecognitionSafe();
-      }
+    function manualTrigger() {
+      startLoop();
     }
 
     // ============================================================
-    //  VOICE-CONTROLLED MUSIC & AMBIENT BEATS ENGINE
+    //  INTELLIGENT COMMAND PROCESSOR (HUMAN PROSODY & YOUTUBE)
     // ============================================================
-    const TRACKS = [
-      { title: "Cyberpunk Pulse — 120 BPM", sub: "Synthwave Focus Stream" },
-      { title: "Neo Lo-Fi Chill — 85 BPM", sub: "Deep Study Ambient" },
-      { title: "Cosmic Horizon — Ambient", sub: "Ethereal Drone Meditation" }
-    ];
-    let currentTrack = 0;
-    let isMusicPlaying = false;
-    let audioCtx = null;
-    let synthTimer = null;
+    const POPULAR_YOUTUBE_TRACKS = {
+      "believer": "7wtfhZwyrcc",
+      "interstellar": "UDVtMYqUAyw",
+      "lofi": "jfKfPfyJRdk",
+      "shape of you": "JGwWNGJdvx8",
+      "faded": "60ItHLz5WEA",
+      "arijit singh": "sK7riqg2mr4",
+      "cyberpunk": "x3B4q4Xf_68",
+      "synthwave": "4xDzrJKXOOY"
+    };
 
-    function playSynthBeat(trackIdx) {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      // Procedural Web Audio Synth for 100% reliable offline/online playback
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      const frequencies = [
-        [220, 261.63, 329.63, 392], // Am7
-        [174.61, 220, 261.63, 329.63], // Fmaj7
-        [196, 246.94, 293.66, 392]  // G7
-      ];
-      const chord = frequencies[trackIdx % frequencies.length];
-      const freq = chord[Math.floor(Math.random() * chord.length)];
-
-      osc.type = trackIdx === 0 ? 'sawtooth' : 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 1.2);
-
-      if (isMusicPlaying) {
-        const interval = trackIdx === 0 ? 500 : 900;
-        synthTimer = setTimeout(() => playSynthBeat(trackIdx), interval);
-      }
-    }
-
-    function startMusic() {
-      isMusicPlaying = true;
-      document.getElementById('musicBar').classList.add('active');
-      document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
-      document.getElementById('trackTitle').textContent = TRACKS[currentTrack].title;
-      document.getElementById('trackStatus').textContent = 'NOW PLAYING (Voice controlled)';
-      playSynthBeat(currentTrack);
-    }
-
-    function pauseMusic() {
-      isMusicPlaying = false;
-      if (synthTimer) clearTimeout(synthTimer);
-      document.getElementById('musicBar').classList.remove('active');
-      document.getElementById('playPauseBtn').textContent = '▶️ Play';
-      document.getElementById('trackStatus').textContent = 'PAUSED • Say "Resume music"';
-    }
-
-    function toggleMusicPlayback() {
-      if (isMusicPlaying) pauseMusic();
-      else startMusic();
-    }
-
-    function nextTrack() {
-      currentTrack = (currentTrack + 1) % TRACKS.length;
-      if (isMusicPlaying) {
-        pauseMusic();
-        startMusic();
-      } else {
-        document.getElementById('trackTitle').textContent = TRACKS[currentTrack].title;
-      }
-    }
-
-    function prevTrack() {
-      currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
-      if (isMusicPlaying) {
-        pauseMusic();
-        startMusic();
-      } else {
-        document.getElementById('trackTitle').textContent = TRACKS[currentTrack].title;
-      }
-    }
-
-    // ============================================================
-    //  OMNI-APP & VOICE LOGIC CONTROLLER
-    // ============================================================
-    function handleOmniCommand(raw) {
+    function handleBossCommand(raw) {
       const text = raw.toLowerCase().trim();
 
-      // --- 1. Music Voice Commands ---
-      if (text.includes("play music") || text.includes("start music") || text.includes("play song") || text.includes("play lo-fi") || text.includes("play lofi")) {
-        startMusic();
-        const msg = "Playing music now! Say 'pause' or 'next track' anytime.";
-        addMessage(msg, 'agent');
-        speakFemaleVoice(msg);
+      // --- 1. Waiting for YouTube Query Follow-Up ---
+      if (waitingForYoutubeQuery) {
+        waitingForYoutubeQuery = false;
+        const songOrQuery = text.replace(/^(play|search( for)?)\s+/i, '').trim();
+        
+        // Check popular songs to play in embedded player
+        for (const [key, vidId] of Object.entries(POPULAR_YOUTUBE_TRACKS)) {
+          if (songOrQuery.includes(key)) {
+            playYouTubeVideoId(vidId, songOrQuery);
+            const reply = `Playing ${songOrQuery} for you right now on YouTube, Boss Abhishek!`;
+            addMessage(reply, 'agent');
+            speakHuman(reply);
+            return;
+          }
+        }
+
+        // Open YouTube search directly
+        const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(songOrQuery)}`;
+        const reply = `Playing and searching for "${songOrQuery}" on YouTube for you, Boss Abhishek!`;
+        addMessage(reply, 'agent');
+        speakHuman(reply);
+        setTimeout(() => window.open(ytSearchUrl, '_blank'), 700);
         return;
       }
 
-      if (text === "pause" || text === "pause music" || text === "stop music" || text === "mute music") {
-        pauseMusic();
-        const msg = "Music paused. Say 'resume music' whenever you're ready.";
-        addMessage(msg, 'agent');
-        speakFemaleVoice(msg);
+      // --- 2. Boss & Developer Identity ---
+      if (text.includes("who is your boss") || text.includes("who is your creator") || text.includes("who developed you") || text.includes("who is your developer") || text.includes("who made you")) {
+        const reply = "You are my boss and developer, Abhishek! You engineered and designed me from scratch.";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
         return;
       }
 
-      if (text.includes("resume music") || text.includes("continue music") || text.includes("unpause")) {
-        startMusic();
-        const msg = "Resuming your music!";
-        addMessage(msg, 'agent');
-        speakFemaleVoice(msg);
+      if (text.includes("what is my name") || text.includes("do you know my name") || text.includes("who am i")) {
+        const reply = "Your name is Abhishek. You are my boss, creator, and software engineer!";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
         return;
       }
 
-      if (text.includes("next track") || text.includes("next song") || text.includes("change song") || text.includes("skip")) {
-        nextTrack();
-        const msg = `Skipped to ${TRACKS[currentTrack].title}!`;
-        addMessage(msg, 'agent');
-        speakFemaleVoice(msg);
+      if (text.startsWith("hi") || text.startsWith("hello") || text.includes("hey")) {
+        const reply = "Hi Boss Abhishek! It's great to hear from you. What would you like to do today?";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
         return;
       }
 
-      // --- 2. Dynamic Math Calculator ---
-      const mathMatch = text.match(/(calculate|what is|how much is)\s+([0-9\+\-\*\/\.\s\(\)]+|[0-9]+\s+(times|plus|minus|divided by|percent of)\s+[0-9]+)/i);
-      if (mathMatch || text.includes("times") || text.includes("divided by") || text.includes("plus") || text.includes("minus") || text.includes("percent of")) {
+      if (text.includes("how are you")) {
+        const reply = "I'm performing at peak efficiency, Boss Abhishek! Ready to open YouTube, play music, or handle tasks for you.";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
+        return;
+      }
+
+      // --- 3. YouTube Music Playback & Voice Control ---
+      if (text === "pause" || text === "pause music" || text === "pause video" || text === "stop music") {
+        if (ytPlayer && ytPlayer.pauseVideo) {
+          ytPlayer.pauseVideo();
+        }
+        const reply = "Paused YouTube for you, Boss.";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
+        return;
+      }
+
+      if (text === "play" || text === "resume" || text === "resume music" || text === "continue") {
+        if (ytPlayer && ytPlayer.playVideo) {
+          ytPlayer.playVideo();
+        }
+        const reply = "Resuming YouTube playback, Boss!";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
+        return;
+      }
+
+      // Direct "Play [song] on YouTube" or "Play [song]"
+      if (text.startsWith("play ") || text.includes("on youtube")) {
+        const song = text.replace(/^(play\s+song|play\s+music|play)|on youtube/gi, '').trim();
+        
+        // If simply "play music"
+        if (!song || song === "music" || song === "song") {
+          playYouTubeVideoId("jfKfPfyJRdk", "Lofi Beats");
+          const reply = "Playing chill lofi beats on YouTube for you, Boss Abhishek! Say 'Pause' or 'Resume' anytime.";
+          addMessage(reply, 'agent');
+          speakHuman(reply);
+          return;
+        }
+
+        // Check if known track
+        for (const [key, vidId] of Object.entries(POPULAR_YOUTUBE_TRACKS)) {
+          if (song.includes(key)) {
+            playYouTubeVideoId(vidId, song);
+            const reply = `Playing ${song} for you right now on YouTube, Boss!`;
+            addMessage(reply, 'agent');
+            speakHuman(reply);
+            return;
+          }
+        }
+
+        // Open YouTube directly for specific song
+        const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
+        const reply = `Searching and playing "${song}" on YouTube for you, Boss Abhishek!`;
+        addMessage(reply, 'agent');
+        speakHuman(reply);
+        setTimeout(() => window.open(ytSearchUrl, '_blank'), 700);
+        return;
+      }
+
+      // --- 4. "Open YouTube" -> Ask Proactively for Music/Video ---
+      if (text === "open youtube" || text.includes("youtube.com") || text.includes("launch youtube")) {
+        waitingForYoutubeQuery = true;
+        const ytUrl = "https://www.youtube.com";
+        const reply = "Opening YouTube for you, Boss Abhishek! What video or music would you like me to play or search for next?";
+        addMessage(reply, 'agent');
+        speakHuman(reply);
+        setTimeout(() => window.open(ytUrl, '_blank'), 800);
+        return;
+      }
+
+      // --- 5. Open Other Universal Apps with Proactive Follow-Ups ---
+      const APPS = {
+        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: "Opening Spotify, Boss! Which artist or playlist shall we stream?" },
+        "google": { name: "Google", url: "https://www.google.com", ask: "Google is open, Boss! What query would you like to search?" },
+        "github": { name: "GitHub", url: "https://github.com", ask: "GitHub is open, Boss Abhishek! Want to inspect your repositories?" },
+        "chatgpt": { name: "ChatGPT", url: "https://chat.openai.com", ask: "ChatGPT is ready for your prompts, Boss!" },
+        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: "Opening Maps, Boss! Where are we headed?" },
+        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: "Opening your inbox, Boss!" },
+        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: "WhatsApp Web is open, Boss!" },
+        "twitter": { name: "Twitter", url: "https://x.com", ask: "Twitter opened, Boss!" },
+        "linkedin": { name: "LinkedIn", url: "https://www.linkedin.com", ask: "LinkedIn is open, Boss Abhishek!" }
+      };
+
+      for (const [key, app] of Object.entries(APPS)) {
+        if (text.includes(`open ${key}`) || text.includes(`launch ${key}`)) {
+          addMessage(app.ask, 'agent');
+          speakHuman(app.ask);
+          setTimeout(() => window.open(app.url, '_blank'), 800);
+          return;
+        }
+      }
+
+      // --- 6. Math & Calculations ---
+      if (text.includes("calculate") || text.includes("times") || text.includes("plus") || text.includes("divided by") || text.includes("percent of")) {
         try {
           let expr = text
             .replace(/what is|calculate|how much is/g, '')
@@ -1446,118 +872,48 @@
             .replace(/minus/g, '-')
             .trim();
 
-          // Handle percent of (e.g. 15 percent of 800)
           const pctMatch = expr.match(/([0-9\.]+)\s*(%|percent of)\s*([0-9\.]+)/);
           if (pctMatch) {
             const res = (parseFloat(pctMatch[1]) / 100) * parseFloat(pctMatch[3]);
-            const ans = `${pctMatch[1]} percent of ${pctMatch[3]} is ${res.toLocaleString()}.`;
-            addMessage(ans, 'agent');
-            speakFemaleVoice(ans);
+            const reply = `Boss Abhishek, ${pctMatch[1]} percent of ${pctMatch[3]} is ${res.toLocaleString()}.`;
+            addMessage(reply, 'agent');
+            speakHuman(reply);
             return;
           }
 
           if (/^[0-9\+\-\*\/\.\s\(\)]+$/.test(expr)) {
             const result = Function('"use strict";return (' + expr + ')')();
             if (!isNaN(result) && isFinite(result)) {
-              const ans = `The answer is ${result.toLocaleString()}.`;
-              addMessage(ans, 'agent');
-              speakFemaleVoice(ans);
+              const reply = `The answer is ${result.toLocaleString()}, Boss!`;
+              addMessage(reply, 'agent');
+              speakHuman(reply);
               return;
             }
           }
-        } catch(e) {}
+        } catch(e){}
       }
 
-      // --- 3. Contextual Follow-Up Execution ---
-      // If user recently opened an app (e.g. YouTube), follow up commands run in that context!
-      if (lastContextApp === 'youtube' && (text.startsWith('play ') || text.startsWith('search '))) {
-        const query = text.replace(/^(play|search( for)?)\s+/i, '').trim();
-        const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-        const ans = `Searching YouTube for "${query}"!`;
-        addMessage(ans, 'agent');
-        speakFemaleVoice(ans);
-        setTimeout(() => window.open(url, '_blank'), 700);
-        lastContextApp = null;
+      // --- 7. Time & Date ---
+      if (text.includes("time") || text.includes("clock")) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const reply = `The time is currently ${timeStr}, Boss Abhishek.`;
+        addMessage(reply, 'agent');
+        speakHuman(reply);
         return;
       }
 
-      if (lastContextApp === 'google' && text.startsWith('search ')) {
-        const query = text.replace(/^search( for)?\s+/i, '').trim();
-        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        const ans = `Searching Google for "${query}"!`;
-        addMessage(ans, 'agent');
-        speakFemaleVoice(ans);
-        setTimeout(() => window.open(url, '_blank'), 700);
-        lastContextApp = null;
+      if (text.includes("date") || text.includes("day")) {
+        const dateStr = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        const reply = `Today is ${dateStr}, Boss.`;
+        addMessage(reply, 'agent');
+        speakHuman(reply);
         return;
       }
 
-      // --- 4. Universal App Opening with Proactive Voice Suggestion ---
-      for (const app of APPS_DIRECTORY) {
-        if (text.includes(`open ${app.id}`) || text.includes(`go to ${app.id}`) || text.includes(`launch ${app.id}`)) {
-          lastContextApp = app.id;
-          addMessage(`Opening ${app.name}...`, 'agent');
-          addProactiveSuggestion(`💡 Proactive Suggestion: ${app.followUp}`);
-          speakFemaleVoice(app.followUp);
-          if (app.url) {
-            setTimeout(() => window.open(app.url, '_blank'), 800);
-          }
-          return;
-        }
-      }
-
-      // --- 5. Direct Web Search Intent ---
-      if (text.startsWith("search for") || text.startsWith("google") || text.startsWith("search")) {
-        const query = text.replace(/^(search for|google|search)\s+/i, '').trim();
-        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        const ans = `Searching the web for "${query}".`;
-        addMessage(ans, 'agent');
-        speakFemaleVoice(ans);
-        setTimeout(() => window.open(url, '_blank'), 800);
-        return;
-      }
-
-      // --- 6. Direct YouTube Search/Play Intent ---
-      if (text.includes("on youtube") || (text.includes("youtube") && text.includes("play"))) {
-        const query = text.replace(/on youtube|play|search|youtube/g, '').trim();
-        const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-        const ans = `Finding "${query}" on YouTube.`;
-        addMessage(ans, 'agent');
-        speakFemaleVoice(ans);
-        setTimeout(() => window.open(url, '_blank'), 800);
-        return;
-      }
-
-      // --- 7. Knowledge Base Intent Matching ---
-      for (const intent of KNOWLEDGE_BASE.intents) {
-        for (const pattern of intent.patterns) {
-          if (text === pattern.toLowerCase() || text.includes(pattern.toLowerCase())) {
-            let reply = '';
-            if (intent.id === 'time') {
-              reply = `It is currently ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.`;
-            } else if (intent.id === 'date') {
-              reply = `Today is ${new Date().toLocaleDateString(undefined, {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})}.`;
-            } else if (Array.isArray(intent.response)) {
-              reply = intent.response[Math.floor(Math.random() * intent.response.length)];
-            } else {
-              reply = intent.response;
-            }
-
-            addMessage(reply, 'agent');
-            speakFemaleVoice(reply);
-
-            if (intent.url) {
-              setTimeout(() => window.open(intent.url, '_blank'), 800);
-            }
-            return;
-          }
-        }
-      }
-
-      // --- 8. Conversational Fallback with Smart Suggestion ---
-      const fallback = `I heard "${raw}". In full cloud mode, this is streamed directly to Groq LPU inference for deep reasoning. You can also ask me to open any app, search, solve math, or play music!`;
-      addMessage(fallback, 'agent');
-      speakFemaleVoice(fallback);
+      // --- 8. Conversational Fallback ---
+      const reply = `I heard "${raw}", Boss Abhishek. Would you like me to open YouTube, play music, or look this up for you?`;
+      addMessage(reply, 'agent');
+      speakHuman(reply);
     }
 
     function addMessage(text, role) {
@@ -1569,67 +925,21 @@
       stream.scrollTop = stream.scrollHeight;
     }
 
-    function addProactiveSuggestion(text) {
-      const stream = document.getElementById('dialogStream');
-      const pill = document.createElement('div');
-      pill.className = 'proactive-pill';
-      pill.textContent = text;
-      stream.appendChild(pill);
-      stream.scrollTop = stream.scrollHeight;
-    }
-
     function sendTextCmd() {
       const input = document.getElementById('cmdInput');
       const val = input.value.trim();
       if (!val) return;
       addMessage(val, 'user');
       input.value = '';
-      handleOmniCommand(val);
+      handleBossCommand(val);
     }
 
     function sendPrompt(prompt) {
       addMessage(prompt, 'user');
-      handleOmniCommand(prompt);
-      if (currentTab !== 0) switchTab(0);
+      handleBossCommand(prompt);
     }
 
-    // Populate Apps & Commands Directory Tab
-    function renderDirectory() {
-      const grid = document.getElementById('dirGrid');
-      grid.innerHTML = '';
-      APPS_DIRECTORY.forEach(app => {
-        const card = document.createElement('div');
-        card.className = 'cmd-card';
-        card.onclick = () => sendPrompt(app.sample);
-        card.innerHTML = `
-          <div class="cmd-header">
-            <span class="cmd-title">${app.icon} ${app.name}</span>
-            <span class="cmd-badge">VOICE READY</span>
-          </div>
-          <div class="cmd-sample">🗣️ "${app.sample}"</div>
-          <div class="cmd-desc">${app.followUp}</div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function renderKB(filter = '') {
-      const pre = document.getElementById('kbDisplay');
-      if (!filter) {
-        pre.textContent = JSON.stringify(KNOWLEDGE_BASE, null, 2);
-      } else {
-        const filtered = KNOWLEDGE_BASE.intents.filter(i => 
-          i.id.includes(filter) || i.patterns.some(p => p.includes(filter))
-        );
-        pre.textContent = JSON.stringify({ intents: filtered }, null, 2);
-      }
-    }
-
-    function filterKB() {
-      renderKB(document.getElementById('kbFilterInput').value.toLowerCase());
-    }
-
-    // Particle Animation
+    // Background Particle Animation
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let width, height;
@@ -1642,14 +952,14 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 35; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
         radius: Math.random() * 2 + 1,
-        color: i % 2 === 0 ? 'rgba(0, 240, 255, 0.25)' : 'rgba(236, 72, 153, 0.25)'
+        color: i % 2 === 0 ? 'rgba(0, 240, 255, 0.22)' : 'rgba(236, 72, 153, 0.22)'
       });
     }
 
@@ -1671,13 +981,10 @@
     }
     animateParticles();
 
-    renderDirectory();
-    renderKB();
-
-    // Start Hands-Free loop on first user interaction
+    // Start Hands-Free loop on first touch/click
     window.addEventListener('click', () => {
       if (handsFreeActive && !isListening && !isSpeaking) {
-        startRecognitionSafe();
+        startLoop();
       }
     }, { once: true });
   </script>
