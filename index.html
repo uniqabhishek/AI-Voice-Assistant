@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Nexus AI — Boss Abhishek's Personal Voice Assistant</title>
+  <title>Nexus AI — Boss Abhishek's Voice Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,12 +11,13 @@
   <style>
     :root {
       --bg: #030612;
-      --card-bg: rgba(11, 17, 36, 0.78);
-      --card-border: rgba(0, 240, 255, 0.25);
+      --card-bg: rgba(11, 17, 36, 0.85);
+      --card-border: rgba(0, 240, 255, 0.28);
       --cyan: #00F0FF;
       --emerald: #00FF9D;
       --purple: #A855F7;
       --pink: #EC4899;
+      --yt-red: #FF0033;
       --text: #F8FAFC;
       --muted: #94A3B8;
       --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -49,48 +50,48 @@
     .app-viewport {
       position: relative;
       z-index: 1;
-      max-width: 760px;
+      max-width: 780px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 16px 16px 24px;
+      padding: 14px 16px 24px;
     }
 
-    /* Minimalist Top Bar */
+    /* Minimalist Futuristic Top Bar */
     .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 20px;
+      padding: 12px 18px;
       background: rgba(8, 14, 28, 0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--card-border);
-      border-radius: 20px;
-      margin-bottom: 16px;
+      border-radius: 18px;
+      margin-bottom: 14px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .brand-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       background: linear-gradient(135deg, var(--cyan), var(--purple));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+      font-size: 18px;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
     }
     .brand-title {
       font-weight: 800;
-      font-size: 18px;
+      font-size: 17px;
       letter-spacing: 0.5px;
       background: linear-gradient(90deg, #FFFFFF, var(--cyan), #A855F7);
       -webkit-background-clip: text;
@@ -123,7 +124,7 @@
       50% { transform: scale(1.3); opacity: 1; }
     }
 
-    /* Main Voice Assistant Terminal Card */
+    /* Main Voice Assistant Card */
     .assistant-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -133,26 +134,26 @@
       display: flex;
       flex-direction: column;
       flex: 1;
-      padding: 24px 20px;
+      padding: 20px 18px;
       box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
       position: relative;
     }
 
-    /* 3D Voice Orb */
+    /* 3D Voice Orb Stage */
     .orb-stage {
       position: relative;
       width: 100%;
-      height: 180px;
+      height: 160px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .orb-core {
-      width: 90px;
-      height: 90px;
+      width: 86px;
+      height: 86px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #00F0FF, #7928CA 60%, #030612);
       box-shadow: 0 0 36px rgba(0, 240, 255, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.4);
@@ -170,17 +171,17 @@
       border: 1px solid rgba(0, 240, 255, 0.35);
       animation: orbSpin 7s linear infinite;
     }
-    .orb-ring.r1 { width: 122px; height: 122px; border-top-color: var(--cyan); }
-    .orb-ring.r2 { width: 154px; height: 154px; border-bottom-color: var(--pink); animation-duration: 10s; animation-direction: reverse; }
+    .orb-ring.r1 { width: 118px; height: 118px; border-top-color: var(--cyan); }
+    .orb-ring.r2 { width: 148px; height: 148px; border-bottom-color: var(--pink); animation-duration: 10s; animation-direction: reverse; }
 
     body.listening .orb-core {
-      transform: scale(1.16);
+      transform: scale(1.15);
       box-shadow: 0 0 60px rgba(0, 255, 157, 0.85), inset 0 0 24px #FFFFFF;
       background: radial-gradient(circle at 35% 35%, #00FF9D, #00B4D8 60%, #030612);
     }
 
     body.speaking .orb-core {
-      transform: scale(1.15);
+      transform: scale(1.14);
       box-shadow: 0 0 60px rgba(236, 72, 153, 0.85), inset 0 0 24px #FFFFFF;
       background: radial-gradient(circle at 35% 35%, #F472B6, #A855F7 60%, #030612);
     }
@@ -190,98 +191,124 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Live Equalizer Waveform */
     .waveform-visualizer {
       display: flex;
       align-items: center;
       gap: 3.5px;
-      height: 26px;
-      margin-top: 14px;
+      height: 24px;
+      margin-top: 12px;
     }
     .wave-bar {
       width: 4px;
-      height: 6px;
+      height: 5px;
       border-radius: 2px;
       background: var(--cyan);
       transition: height 0.08s ease, background-color 0.2s;
     }
 
-    /* YouTube Embedded Player Card (Interactive Voice Controlled) */
-    .yt-container {
+    /* Real YouTube Streaming Player Card */
+    .yt-card {
       display: none;
-      background: rgba(14, 21, 44, 0.9);
-      border: 1px solid rgba(255, 0, 0, 0.4);
+      background: rgba(14, 21, 46, 0.95);
+      border: 1px solid rgba(255, 0, 51, 0.45);
       border-radius: 18px;
       padding: 14px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 30px rgba(255, 0, 0, 0.2);
-      animation: fadeIn 0.35s ease;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 32px rgba(255, 0, 51, 0.25);
+      animation: popIn 0.3s ease;
     }
-    .yt-container.active { display: block; }
+    .yt-card.active { display: block; }
 
-    .yt-header {
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .yt-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 10px;
     }
-    .yt-title {
-      font-weight: 700;
-      font-size: 13px;
-      color: #FFFFFF;
+    .yt-now-playing {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #FFFFFF;
     }
-    .yt-badge {
+    .yt-status {
       font-size: 11px;
       font-family: var(--font-mono);
-      background: rgba(255, 0, 0, 0.2);
-      border: 1px solid rgba(255, 0, 0, 0.4);
+      background: rgba(255, 0, 51, 0.2);
+      border: 1px solid rgba(255, 0, 51, 0.5);
       color: #FF4D4D;
-      padding: 2px 8px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-weight: 700;
     }
 
-    .yt-frame-wrapper {
+    .yt-screen-wrapper {
       position: relative;
-      padding-bottom: 45%;
+      padding-bottom: 52%;
       height: 0;
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
       background: #000000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
     }
-    .yt-frame-wrapper iframe {
+    .yt-screen-wrapper iframe {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       border: none;
     }
 
-    .yt-voice-tip {
+    .yt-voice-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
       font-size: 11.5px;
       color: var(--muted);
-      margin-top: 8px;
-      text-align: center;
+    }
+    .yt-quick-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .yt-act-btn {
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      color: #FFFFFF;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .yt-act-btn:hover {
+      background: rgba(255, 0, 51, 0.25);
+      border-color: var(--yt-red);
     }
 
-    /* Dialog Feed */
+    /* Dialogue Messages Stream */
     .dialog-stream {
       flex: 1;
       overflow-y: auto;
-      max-height: 280px;
-      padding: 10px 4px;
+      max-height: 250px;
+      padding: 8px 4px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       scrollbar-width: thin;
       scrollbar-color: rgba(0, 240, 255, 0.2) transparent;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .msg-bubble {
       max-width: 85%;
-      padding: 12px 16px;
+      padding: 11px 16px;
       border-radius: 16px;
       font-size: 14px;
       line-height: 1.5;
@@ -302,7 +329,7 @@
 
     .msg-agent {
       align-self: flex-start;
-      background: rgba(26, 35, 64, 0.7);
+      background: rgba(26, 35, 64, 0.75);
       border: 1px solid rgba(236, 72, 153, 0.35);
       color: #E2E8F0;
       border-bottom-left-radius: 4px;
@@ -319,12 +346,12 @@
       border-radius: 99px;
     }
 
-    /* Quick Prompts Carousel */
+    /* Prompt Chips Carousel */
     .prompt-chips {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 6px 2px 10px;
+      padding: 4px 2px 8px;
       scrollbar-width: none;
     }
     .prompt-chips::-webkit-scrollbar { display: none; }
@@ -400,11 +427,11 @@
 
     @media (max-width: 600px) {
       .app-viewport { padding: 8px 12px 18px; }
-      .orb-stage { height: 140px; }
-      .orb-core { width: 76px; height: 76px; }
-      .orb-ring.r1 { width: 104px; height: 104px; }
-      .orb-ring.r2 { width: 132px; height: 132px; }
-      .dialog-stream { max-height: 220px; }
+      .orb-stage { height: 135px; }
+      .orb-core { width: 74px; height: 74px; }
+      .orb-ring.r1 { width: 102px; height: 102px; }
+      .orb-ring.r2 { width: 130px; height: 130px; }
+      .dialog-stream { max-height: 200px; }
     }
   </style>
 </head>
@@ -414,7 +441,7 @@
 
   <div class="app-viewport">
     
-    <!-- Top Bar -->
+    <!-- Top Header -->
     <header class="top-bar">
       <div class="brand">
         <div class="brand-icon">✨</div>
@@ -432,109 +459,144 @@
     <!-- Main Voice Assistant Card -->
     <main class="assistant-card">
       
-      <!-- 3D Voice Orb -->
+      <!-- 3D Voice Orb Stage -->
       <div class="orb-stage">
         <div class="orb-ring r1"></div>
         <div class="orb-ring r2"></div>
-        <div class="orb-core" id="orbCore" onclick="manualTrigger()" title="Continuous Listening Active">
+        <div class="orb-core" id="orbCore" onclick="globalScreenActivate()" title="Hands-Free Auto Loop Online">
           <span style="font-size: 32px;" id="orbIcon">✨</span>
         </div>
         
         <div class="waveform-visualizer" id="waveContainer"></div>
       </div>
 
-      <!-- YouTube Voice Player (Auto-Loads & Responds to Voice) -->
-      <div class="yt-container" id="ytContainer">
-        <div class="yt-header">
-          <div class="yt-title">
-            <span>▶️ YouTube Voice Player</span>
+      <!-- Real YouTube Streaming Player Card -->
+      <section class="yt-card" id="ytCard">
+        <div class="yt-bar">
+          <div class="yt-now-playing">
+            <span style="color: var(--yt-red); font-size: 16px;">▶️</span>
+            <span id="ytTitleText">YouTube Video Stream</span>
           </div>
-          <span class="yt-badge" id="ytStatusBadge">VOICE READY</span>
+          <span class="yt-status" id="ytStatusBadge">STREAMING</span>
         </div>
-        <div class="yt-frame-wrapper" id="ytFrameWrapper">
-          <div id="player"></div>
+        
+        <div class="yt-screen-wrapper">
+          <iframe id="ytIframe"
+                  src=""
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen>
+          </iframe>
         </div>
-        <div class="yt-voice-tip">
-          🎙️ Voice Controls: <i>"Pause"</i>, <i>"Play / Resume"</i>, <i>"Play [Song Name]"</i>
+
+        <div class="yt-voice-hud">
+          <span>🎙️ Say: <i>"Pause"</i> • <i>"Resume"</i> • <i>"Play [Any Song]"</i></span>
+          <div class="yt-quick-actions">
+            <button class="yt-act-btn" onclick="toggleYtPlayback()">⏯️ Pause / Play</button>
+            <button class="yt-act-btn" onclick="openCurrentInNewTab()">↗️ Open Full YouTube</button>
+          </div>
         </div>
-      </div>
+      </section>
 
       <!-- Live Dialogue Stream -->
       <div class="dialog-stream" id="dialogStream">
-        <div class="msg-sys">Hands-free loop online. Speak naturally without touching anything.</div>
-        <div class="msg-bubble msg-agent">Hi Boss Abhishek! I'm your personal voice assistant, built and engineered by you. I'm listening continuously. Say "open YouTube", "play music", or ask me anything!</div>
+        <div class="msg-sys">Hands-free voice loop online. Speak naturally without touching anything.</div>
+        <div class="msg-bubble msg-agent">Hi Boss Abhishek! I'm your personal voice assistant, built and engineered by you. Say "open YouTube", "play Believer", "play Arijit Singh", or any song — and I will stream it automatically!</div>
       </div>
 
       <!-- Quick Action Prompt Chips -->
       <div class="prompt-chips">
         <button class="chip-btn" onclick="sendPrompt('Open YouTube')">▶️ Open YouTube</button>
         <button class="chip-btn" onclick="sendPrompt('Play Believer on YouTube')">🎵 Play Believer</button>
-        <button class="chip-btn" onclick="sendPrompt('Play lofi chill beats')">☕ Play Lo-Fi Beats</button>
+        <button class="chip-btn" onclick="sendPrompt('Play Hanuman Chalisa on YouTube')">🙏 Play Hanuman Chalisa</button>
+        <button class="chip-btn" onclick="sendPrompt('Play Arijit Singh songs')">🎧 Play Arijit Singh</button>
+        <button class="chip-btn" onclick="sendPrompt('Pause')">⏸️ Pause</button>
+        <button class="chip-btn" onclick="sendPrompt('Resume')">▶️ Resume</button>
         <button class="chip-btn" onclick="sendPrompt('Who is your boss?')">👑 Who is your boss?</button>
-        <button class="chip-btn" onclick="sendPrompt('Who developed you?')">🛠️ Who developed you?</button>
-        <button class="chip-btn" onclick="sendPrompt('What is my name?')">👤 What is my name?</button>
       </div>
 
       <!-- Bottom Input Row -->
       <div class="controls-row">
-        <input type="text" class="text-input" id="cmdInput" placeholder="Listening in hands-free loop... (or type here)" onkeydown="if(event.key==='Enter') sendTextCmd()" />
-        <button class="voice-cta-btn" id="micBtn" onclick="manualTrigger()" aria-label="Microphone">🎙️</button>
+        <input type="text" class="text-input" id="cmdInput" placeholder="Hands-free active — speak anytime or type here..." onkeydown="if(event.key==='Enter') sendTextCmd()" />
+        <button class="voice-cta-btn" id="micBtn" onclick="globalScreenActivate()" aria-label="Microphone">🎙️</button>
       </div>
 
     </main>
 
   </div>
 
-  <!-- YouTube IFrame API Script -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-
   <script>
     // Developer & Boss Identity
     const DEVELOPER = "Abhishek";
     const BOSS = "Boss Abhishek";
 
-    // YouTube Player State
-    let ytPlayer = null;
-    let ytReady = false;
+    // YouTube State
     let isYtPlaying = false;
+    let currentYtSearch = "";
     let waitingForYoutubeQuery = false;
 
-    function onYouTubeIframeAPIReady() {
-      ytPlayer = new YT.Player('player', {
-        height: '100%',
-        width: '100%',
-        videoId: 'jfKfPfyJRdk', // Default soothing lofi stream
-        playerVars: {
-          'autoplay': 0,
-          'controls': 1,
-          'modestbranding': 1,
-          'rel': 0
-        },
-        events: {
-          'onReady': () => { ytReady = true; },
-          'onStateChange': (e) => {
-            if (e.data === YT.PlayerState.PLAYING) {
-              isYtPlaying = true;
-              document.getElementById('ytStatusBadge').textContent = 'PLAYING';
-              document.getElementById('ytStatusBadge').style.color = '#00FF9D';
-            } else if (e.data === YT.PlayerState.PAUSED) {
-              isYtPlaying = false;
-              document.getElementById('ytStatusBadge').textContent = 'PAUSED';
-              document.getElementById('ytStatusBadge').style.color = '#FFB800';
-            }
-          }
-        }
-      });
+    // Automatic YouTube Search & Autoplay Engine
+    function streamAnyYouTubeVideo(query) {
+      currentYtSearch = query;
+      const ytCard = document.getElementById('ytCard');
+      const ytIframe = document.getElementById('ytIframe');
+      const titleText = document.getElementById('ytTitleText');
+      const statusBadge = document.getElementById('ytStatusBadge');
+
+      ytCard.classList.add('active');
+      titleText.textContent = `Streaming: "${query}"`;
+      statusBadge.textContent = 'AUTO-PLAYING';
+      statusBadge.style.color = '#00FF9D';
+      isYtPlaying = true;
+
+      // YouTube embed with listType=search automatically plays the top matching video!
+      const embedUrl = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query)}&autoplay=1&enablejsapi=1`;
+      ytIframe.src = embedUrl;
+
+      // Scroll smoothly to video player if needed
+      ytCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function playYouTubeVideoId(videoId, title = "YouTube Video") {
-      document.getElementById('ytContainer').classList.add('active');
-      if (ytPlayer && ytPlayer.loadVideoById) {
-        ytPlayer.loadVideoById(videoId);
-        ytPlayer.playVideo();
+    // Direct Voice Pause & Play Commands on YouTube Stream
+    function sendCommandToYtIframe(funcName) {
+      const ytIframe = document.getElementById('ytIframe');
+      if (ytIframe && ytIframe.contentWindow) {
+        ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: funcName,
+          args: ''
+        }), '*');
+      }
+    }
+
+    function pauseYouTube() {
+      sendCommandToYtIframe('pauseVideo');
+      isYtPlaying = false;
+      document.getElementById('ytStatusBadge').textContent = 'PAUSED';
+      document.getElementById('ytStatusBadge').style.color = '#FFB800';
+    }
+
+    function resumeYouTube() {
+      sendCommandToYtIframe('playVideo');
+      isYtPlaying = true;
+      document.getElementById('ytStatusBadge').textContent = 'STREAMING';
+      document.getElementById('ytStatusBadge').style.color = '#00FF9D';
+    }
+
+    function toggleYtPlayback() {
+      if (isYtPlaying) {
+        pauseYouTube();
+        speakHuman("Paused YouTube, Boss.");
       } else {
-        document.getElementById('ytFrameWrapper').innerHTML = 
-          `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="autoplay" allowfullscreen></iframe>`;
+        resumeYouTube();
+        speakHuman("Resuming playback, Boss!");
+      }
+    }
+
+    function openCurrentInNewTab() {
+      if (currentYtSearch) {
+        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(currentYtSearch)}`, '_blank');
+      } else {
+        window.open('https://www.youtube.com', '_blank');
       }
     }
 
@@ -558,7 +620,6 @@
       const voices = window.speechSynthesis.getVoices();
       if (!voices || voices.length === 0) return;
 
-      // Prioritize modern high-fidelity Natural / Neural Female voices
       naturalFemaleVoice = voices.find(v => 
         (v.name.includes("Natural") && v.name.includes("Female")) ||
         v.name.includes("Jenny") ||
@@ -576,21 +637,21 @@
       selectNaturalVoice();
     }
 
-    // Human-like Speech Delivery with Natural Breathing Gaps
+    // Lifelike Human Voice Delivery with Natural Breathing Pauses
     function speakHuman(text, onComplete = null) {
       if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
 
-      // Temporarily suspend recognition so the mic doesn't catch the speaker audio
+      // Suspend recognition while assistant is speaking so it doesn't hear itself
       if (recognition && isListening) {
         try { recognition.abort(); } catch(e){}
       }
 
-      // Break text into natural human conversational clauses for lifelike breathing pauses
-      const sentences = text.match(/[^.!?]+[.!?]+|\S+/g) || [text];
+      // Break clauses for human breathing gaps
+      const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
       let idx = 0;
 
-      function speakNextClause() {
+      function speakClause() {
         if (idx >= sentences.length) {
           isSpeaking = false;
           document.body.classList.remove('speaking');
@@ -604,7 +665,7 @@
         const clause = sentences[idx].trim();
         idx++;
         if (!clause) {
-          speakNextClause();
+          speakClause();
           return;
         }
 
@@ -612,8 +673,8 @@
         if (!naturalFemaleVoice) selectNaturalVoice();
         if (naturalFemaleVoice) utterance.voice = naturalFemaleVoice;
 
-        // Human prosody: slight pitch variation, natural pace (0.98), never robotic
-        utterance.pitch = 1.08;
+        // Expressive human pitch & cadence
+        utterance.pitch = 1.09;
         utterance.rate = 0.98;
 
         utterance.onstart = () => {
@@ -624,18 +685,18 @@
         };
 
         utterance.onend = () => {
-          // Human breathing gap between sentences (120ms pause)
-          setTimeout(speakNextClause, 120);
+          // 120ms natural human breathing pause
+          setTimeout(speakClause, 120);
         };
 
         utterance.onerror = () => {
-          speakNextClause();
+          speakClause();
         };
 
         window.speechSynthesis.speak(utterance);
       }
 
-      speakNextClause();
+      speakClause();
     }
 
     function animateBars() {
@@ -647,7 +708,7 @@
     }
 
     function resetBars() {
-      waveBars.forEach(b => b.style.height = '6px');
+      waveBars.forEach(b => b.style.height = '5px');
     }
 
     // ============================================================
@@ -698,54 +759,42 @@
       } catch(e){}
     }
 
-    function manualTrigger() {
+    // Global Click Anywhere to Activate & Prime Browser Audio/Video Autoplay
+    function globalScreenActivate() {
       startLoop();
+      // Resume audio context to allow unrestricted autoplay
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
+        ctx.resume();
+      }
     }
+
+    document.addEventListener('pointerdown', () => {
+      if (handsFreeActive && !isListening && !isSpeaking) {
+        startLoop();
+      }
+    }, { passive: true });
 
     // ============================================================
     //  INTELLIGENT COMMAND PROCESSOR (HUMAN PROSODY & YOUTUBE)
     // ============================================================
-    const POPULAR_YOUTUBE_TRACKS = {
-      "believer": "7wtfhZwyrcc",
-      "interstellar": "UDVtMYqUAyw",
-      "lofi": "jfKfPfyJRdk",
-      "shape of you": "JGwWNGJdvx8",
-      "faded": "60ItHLz5WEA",
-      "arijit singh": "sK7riqg2mr4",
-      "cyberpunk": "x3B4q4Xf_68",
-      "synthwave": "4xDzrJKXOOY"
-    };
-
     function handleBossCommand(raw) {
       const text = raw.toLowerCase().trim();
 
-      // --- 1. Waiting for YouTube Query Follow-Up ---
+      // --- 1. Follow-Up Query After Asking "What would you like me to play?" ---
       if (waitingForYoutubeQuery) {
         waitingForYoutubeQuery = false;
-        const songOrQuery = text.replace(/^(play|search( for)?)\s+/i, '').trim();
-        
-        // Check popular songs to play in embedded player
-        for (const [key, vidId] of Object.entries(POPULAR_YOUTUBE_TRACKS)) {
-          if (songOrQuery.includes(key)) {
-            playYouTubeVideoId(vidId, songOrQuery);
-            const reply = `Playing ${songOrQuery} for you right now on YouTube, Boss Abhishek!`;
-            addMessage(reply, 'agent');
-            speakHuman(reply);
-            return;
-          }
-        }
-
-        // Open YouTube search directly
-        const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(songOrQuery)}`;
-        const reply = `Playing and searching for "${songOrQuery}" on YouTube for you, Boss Abhishek!`;
+        const song = text.replace(/^(play|search( for)?|put on)\s+/i, '').trim();
+        const reply = `Streaming "${song}" on YouTube right now for you, Boss Abhishek!`;
         addMessage(reply, 'agent');
         speakHuman(reply);
-        setTimeout(() => window.open(ytSearchUrl, '_blank'), 700);
+        streamAnyYouTubeVideo(song);
         return;
       }
 
       // --- 2. Boss & Developer Identity ---
-      if (text.includes("who is your boss") || text.includes("who is your creator") || text.includes("who developed you") || text.includes("who is your developer") || text.includes("who made you")) {
+      if (text.includes("who is your boss") || text.includes("who developed you") || text.includes("who is your developer") || text.includes("who made you")) {
         const reply = "You are my boss and developer, Abhishek! You engineered and designed me from scratch.";
         addMessage(reply, 'agent');
         speakHuman(reply);
@@ -760,95 +809,62 @@
       }
 
       if (text.startsWith("hi") || text.startsWith("hello") || text.includes("hey")) {
-        const reply = "Hi Boss Abhishek! It's great to hear from you. What would you like to do today?";
+        const reply = "Hi Boss Abhishek! I am online and listening. What can I play or do for you?";
         addMessage(reply, 'agent');
         speakHuman(reply);
         return;
       }
 
-      if (text.includes("how are you")) {
-        const reply = "I'm performing at peak efficiency, Boss Abhishek! Ready to open YouTube, play music, or handle tasks for you.";
-        addMessage(reply, 'agent');
-        speakHuman(reply);
-        return;
-      }
-
-      // --- 3. YouTube Music Playback & Voice Control ---
-      if (text === "pause" || text === "pause music" || text === "pause video" || text === "stop music") {
-        if (ytPlayer && ytPlayer.pauseVideo) {
-          ytPlayer.pauseVideo();
-        }
+      // --- 3. YouTube Play, Pause & Resume Voice Commands ---
+      if (text === "pause" || text === "pause music" || text === "pause video" || text === "pause youtube" || text === "stop" || text === "stop music") {
+        pauseYouTube();
         const reply = "Paused YouTube for you, Boss.";
         addMessage(reply, 'agent');
         speakHuman(reply);
         return;
       }
 
-      if (text === "play" || text === "resume" || text === "resume music" || text === "continue") {
-        if (ytPlayer && ytPlayer.playVideo) {
-          ytPlayer.playVideo();
-        }
+      if (text === "play" || text === "resume" || text === "resume music" || text === "resume video" || text === "continue" || text === "unpause") {
+        resumeYouTube();
         const reply = "Resuming YouTube playback, Boss!";
         addMessage(reply, 'agent');
         speakHuman(reply);
         return;
       }
 
-      // Direct "Play [song] on YouTube" or "Play [song]"
+      // --- 4. "Play [ANY SONG / VIDEO] on YouTube" -> Automatic Stream ---
       if (text.startsWith("play ") || text.includes("on youtube")) {
-        const song = text.replace(/^(play\s+song|play\s+music|play)|on youtube/gi, '').trim();
-        
-        // If simply "play music"
-        if (!song || song === "music" || song === "song") {
-          playYouTubeVideoId("jfKfPfyJRdk", "Lofi Beats");
-          const reply = "Playing chill lofi beats on YouTube for you, Boss Abhishek! Say 'Pause' or 'Resume' anytime.";
-          addMessage(reply, 'agent');
-          speakHuman(reply);
-          return;
+        let song = text.replace(/^(play\s+song|play\s+video|play\s+music|play)|on youtube/gi, '').trim();
+        if (!song || song === "music" || song === "song" || song === "video") {
+          song = "lofi chill beats";
         }
-
-        // Check if known track
-        for (const [key, vidId] of Object.entries(POPULAR_YOUTUBE_TRACKS)) {
-          if (song.includes(key)) {
-            playYouTubeVideoId(vidId, song);
-            const reply = `Playing ${song} for you right now on YouTube, Boss!`;
-            addMessage(reply, 'agent');
-            speakHuman(reply);
-            return;
-          }
-        }
-
-        // Open YouTube directly for specific song
-        const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
-        const reply = `Searching and playing "${song}" on YouTube for you, Boss Abhishek!`;
+        const reply = `Playing "${song}" on YouTube for you, Boss Abhishek! Say 'Pause' or 'Resume' anytime.`;
         addMessage(reply, 'agent');
         speakHuman(reply);
-        setTimeout(() => window.open(ytSearchUrl, '_blank'), 700);
+        streamAnyYouTubeVideo(song);
         return;
       }
 
-      // --- 4. "Open YouTube" -> Ask Proactively for Music/Video ---
-      if (text === "open youtube" || text.includes("youtube.com") || text.includes("launch youtube")) {
+      // --- 5. "Open YouTube" -> Ask Proactively for Song/Video ---
+      if (text === "open youtube" || text.includes("launch youtube")) {
         waitingForYoutubeQuery = true;
-        const ytUrl = "https://www.youtube.com";
-        const reply = "Opening YouTube for you, Boss Abhishek! What video or music would you like me to play or search for next?";
+        const reply = "Opening YouTube for you, Boss Abhishek! What video or music should I play next?";
         addMessage(reply, 'agent');
         speakHuman(reply);
-        setTimeout(() => window.open(ytUrl, '_blank'), 800);
+        document.getElementById('ytCard').classList.add('active');
+        streamAnyYouTubeVideo("lofi hip hop beats");
         return;
       }
 
-      // --- 5. Open Other Universal Apps with Proactive Follow-Ups ---
+      // --- 6. Universal Web & App Controller ---
       const APPS = {
-        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: "Opening Spotify, Boss! Which artist or playlist shall we stream?" },
-        "google": { name: "Google", url: "https://www.google.com", ask: "Google is open, Boss! What query would you like to search?" },
-        "github": { name: "GitHub", url: "https://github.com", ask: "GitHub is open, Boss Abhishek! Want to inspect your repositories?" },
+        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: "Opening Spotify, Boss! What artist or playlist shall we stream?" },
+        "google": { name: "Google", url: "https://www.google.com", ask: "Google is open, Boss! What would you like to search?" },
+        "github": { name: "GitHub", url: "https://github.com", ask: "GitHub is open, Boss Abhishek! Ready to inspect your code?" },
         "chatgpt": { name: "ChatGPT", url: "https://chat.openai.com", ask: "ChatGPT is ready for your prompts, Boss!" },
-        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: "Opening Maps, Boss! Where are we headed?" },
-        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: "Opening your inbox, Boss!" },
-        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: "WhatsApp Web is open, Boss!" },
-        "twitter": { name: "Twitter", url: "https://x.com", ask: "Twitter opened, Boss!" },
-        "linkedin": { name: "LinkedIn", url: "https://www.linkedin.com", ask: "LinkedIn is open, Boss Abhishek!" }
+        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: "Opening Google Maps, Boss! Where are we navigating to?" },
+        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: "Opening your Gmail inbox, Boss!" },
+        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: "Opening WhatsApp Web for you, Boss!" }
       };
 
       for (const [key, app] of Object.entries(APPS)) {
@@ -860,7 +876,7 @@
         }
       }
 
-      // --- 6. Math & Calculations ---
+      // --- 7. Math & Calculations ---
       if (text.includes("calculate") || text.includes("times") || text.includes("plus") || text.includes("divided by") || text.includes("percent of")) {
         try {
           let expr = text
@@ -893,10 +909,10 @@
         } catch(e){}
       }
 
-      // --- 7. Time & Date ---
+      // --- 8. Time & Date ---
       if (text.includes("time") || text.includes("clock")) {
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const reply = `The time is currently ${timeStr}, Boss Abhishek.`;
+        const reply = `It is currently ${timeStr}, Boss Abhishek.`;
         addMessage(reply, 'agent');
         speakHuman(reply);
         return;
@@ -910,8 +926,8 @@
         return;
       }
 
-      // --- 8. Conversational Fallback ---
-      const reply = `I heard "${raw}", Boss Abhishek. Would you like me to open YouTube, play music, or look this up for you?`;
+      // --- 9. Conversational Fallback ---
+      const reply = `I heard "${raw}", Boss Abhishek. Would you like me to stream this on YouTube, or search for it?`;
       addMessage(reply, 'agent');
       speakHuman(reply);
     }
@@ -939,7 +955,7 @@
       handleBossCommand(prompt);
     }
 
-    // Background Particle Animation
+    // Particle Canvas Animation
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let width, height;
@@ -980,13 +996,6 @@
       requestAnimationFrame(animateParticles);
     }
     animateParticles();
-
-    // Start Hands-Free loop on first touch/click
-    window.addEventListener('click', () => {
-      if (handsFreeActive && !isListening && !isSpeaking) {
-        startLoop();
-      }
-    }, { once: true });
   </script>
 </body>
 </html>
