@@ -53,7 +53,7 @@ sequenceDiagram
 ## 📂 Project Structure
 
 ```
-project-2/
+AI-Voice-Assistant/
 ├── project 2/
 │   ├── app.py               # Main Flask server & WebSocket voice agent bridge
 │   ├── commands.py          # Token-aware weighted intent scoring engine
@@ -84,8 +84,8 @@ project-2/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/uniqabhishek/project-2.git
-cd "project-2/project 2"
+git clone https://github.com/uniqabhishek/AI-Voice-Assistant.git
+cd "AI-Voice-Assistant/project 2"
 ```
 
 ### 2. Set Up Virtual Environment
