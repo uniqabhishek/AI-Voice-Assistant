@@ -1,6 +1,9 @@
 # 🎙️ Real-Time Conversational Voice AI Agent
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Live Web Demo](https://img.shields.io/badge/Live_App-Test_In_Browser-00F0FF?style=for-the-badge&logo=safari&logoColor=black)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
+[![Mode](https://img.shields.io/badge/Mode-Gemini_Live_Barge--In-00FF9D?style=for-the-badge)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
+[![Audio Engine](https://img.shields.io/badge/Audio-YouTube_Voice_Stream-FF0033?style=for-the-badge&logo=youtube&logoColor=white)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
 [![Deepgram](https://img.shields.io/badge/Voice_Agent-Deepgram_Nova--2_%26_Aura-13EF95?style=for-the-badge&logo=deepgram&logoColor=black)](https://deepgram.com/)
 [![Groq](https://img.shields.io/badge/LLM_Inference-Groq_LPU-F55036?style=for-the-badge&logo=fastapi&logoColor=white)](https://groq.com/)
 [![WebSockets](https://img.shields.io/badge/Streaming-WebSockets_(flask--sock)-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://github.com/pallets-eco/flask-sock)
