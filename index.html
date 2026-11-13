@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Nexus Live — Advanced Conversational Voice Agent</title>
+  <title>Nexus Live — Advanced Conversational Voice AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
   <style>
     :root {
       --bg: #030509;
-      --card-bg: rgba(10, 16, 32, 0.65);
-      --card-border: rgba(255, 255, 255, 0.1);
+      --card-bg: rgba(10, 16, 32, 0.72);
+      --card-border: rgba(255, 255, 255, 0.12);
       --cyan: #00F0FF;
       --emerald: #00FF9D;
       --purple: #A855F7;
@@ -57,70 +57,71 @@
       transition: all 0.8s ease;
     }
 
-    body.listening .ambient-glow {
-      background:
-        radial-gradient(circle at 50% 45%, rgba(0, 255, 157, 0.22) 0%, transparent 60%),
-        radial-gradient(circle at 20% 70%, rgba(0, 240, 255, 0.18) 0%, transparent 50%);
-    }
-
     body.speaking .ambient-glow {
       background:
-        radial-gradient(circle at 50% 40%, rgba(236, 72, 153, 0.24) 0%, transparent 60%),
-        radial-gradient(circle at 80% 60%, rgba(168, 85, 247, 0.22) 0%, transparent 50%);
+        radial-gradient(circle at 50% 35%, rgba(236, 72, 153, 0.25) 0%, transparent 60%),
+        radial-gradient(circle at 25% 75%, rgba(168, 85, 247, 0.20) 0%, transparent 55%),
+        radial-gradient(circle at 75% 25%, rgba(59, 130, 246, 0.18) 0%, transparent 50%);
     }
 
-    /* Main App Viewport */
+    body.listening .ambient-glow {
+      background:
+        radial-gradient(circle at 50% 35%, rgba(0, 240, 255, 0.25) 0%, transparent 60%),
+        radial-gradient(circle at 30% 70%, rgba(0, 255, 157, 0.20) 0%, transparent 55%);
+    }
+
+    /* Main UI Shell */
     .app-shell {
       position: relative;
       z-index: 1;
-      width: 100vw;
-      height: 100dvh;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: env(safe-area-inset-top, 16px) 20px env(safe-area-inset-bottom, 24px);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top, 16px) 20px env(safe-area-inset-bottom, 20px);
     }
 
-    /* Minimalist Gemini / ChatGPT Style Top Header */
+    /* Top Bar */
     .top-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(14, 21, 40, 0.55);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--card-border);
-      border-radius: 99px;
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-      margin: 4px auto 0;
-      width: 100%;
-      max-width: 680px;
+      padding: 12px 0;
     }
 
     .brand-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 7px 16px;
+      border-radius: 999px;
+      backdrop-filter: blur(12px);
     }
+
     .brand-sparkle {
-      font-size: 18px;
-      background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
+      color: var(--cyan);
+      font-size: 14px;
+      animation: spinSlow 8s linear infinite;
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #FFF 0%, #CBD5E1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: sparkleRotate 6s linear infinite;
     }
-    @keyframes sparkleRotate {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(180deg) scale(1.15); }
-      100% { transform: rotate(360deg); }
-    }
-    .brand-title {
-      font-weight: 800;
-      font-size: 15px;
-      letter-spacing: 0.5px;
-      color: #FFFFFF;
-    }
+
     .model-badge {
       font-family: var(--font-mono);
       font-size: 10px;
@@ -128,62 +129,68 @@
       color: var(--cyan);
       background: rgba(0, 240, 255, 0.12);
       border: 1px solid rgba(0, 240, 255, 0.3);
-      padding: 2px 8px;
-      border-radius: 99px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .boss-tag {
-      display: flex;
+
+    .status-tag {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
+      background: rgba(0, 255, 157, 0.1);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      color: var(--emerald);
+      padding: 5px 12px;
+      border-radius: 999px;
       font-family: var(--font-mono);
       font-size: 11px;
-      font-weight: 700;
-      color: var(--emerald);
-      background: rgba(0, 255, 157, 0.1);
-      border: 1px solid rgba(0, 255, 157, 0.35);
-      padding: 4px 10px;
-      border-radius: 99px;
+      font-weight: 600;
     }
+
     .live-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: var(--emerald);
       box-shadow: 0 0 10px var(--emerald);
-      animation: livePulse 1.4s ease-in-out infinite;
+      animation: pulseDot 2s ease infinite;
     }
-    @keyframes livePulse {
-      0%, 100% { transform: scale(0.9); opacity: 0.6; }
-      50% { transform: scale(1.3); opacity: 1; }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
     .nav-btn {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.15);
       background: rgba(255, 255, 255, 0.05);
-      color: var(--muted);
+      border: 1px solid var(--card-border);
+      color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s;
-    }
-    .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #FFFFFF;
-      border-color: var(--cyan);
+      font-size: 15px;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
     }
 
-    /* Center Stage: Organic Liquid Morphing Neural Orb */
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Central Stage */
     .stage {
       flex: 1;
       display: flex;
@@ -191,87 +198,119 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      width: 100%;
-      max-width: 680px;
-      margin: 0 auto;
+      cursor: pointer;
     }
 
     #orb-canvas {
       width: 320px;
       height: 320px;
-      cursor: pointer;
-      filter: drop-shadow(0 0 45px rgba(124, 58, 237, 0.45));
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    #orb-canvas:active {
-      transform: scale(0.96);
+      max-width: 85vw;
+      max-height: 85vw;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Live State Subtitle Floating Pill */
+    @media (min-width: 640px) {
+      #orb-canvas {
+        width: 380px;
+        height: 380px;
+      }
+    }
+
+    /* Dynamic State Pill */
     .state-pill {
       margin-top: 18px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 18px;
-      border-radius: 99px;
-      background: rgba(14, 21, 40, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 16px;
+      border-radius: 999px;
       font-family: var(--font-mono);
-      font-size: 12px;
-      letter-spacing: 0.5px;
+      font-size: 11px;
+      font-weight: 600;
       color: var(--muted);
-      transition: all 0.3s;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-    .state-pill.listening {
-      border-color: var(--emerald);
-      color: var(--emerald);
-      box-shadow: 0 0 25px rgba(0, 255, 157, 0.25);
-    }
-    .state-pill.speaking {
-      border-color: var(--magenta);
-      color: var(--magenta);
-      box-shadow: 0 0 25px rgba(236, 72, 153, 0.25);
+      letter-spacing: 0.6px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
     }
 
-    /* Live Floating Subtitles (ChatGPT Voice / Gemini Style) */
+    .state-pill.speaking {
+      color: var(--magenta);
+      border-color: rgba(236, 72, 153, 0.35);
+      background: rgba(236, 72, 153, 0.1);
+    }
+
+    .state-pill.listening {
+      color: var(--emerald);
+      border-color: rgba(0, 255, 157, 0.35);
+      background: rgba(0, 255, 157, 0.1);
+    }
+
+    /* Floating Subtitle / Transcript Pill */
     .caption-box {
       margin-top: 14px;
-      max-width: 520px;
-      min-height: 48px;
       text-align: center;
-      font-size: 15px;
-      line-height: 1.5;
-      color: #E2E8F0;
+      max-width: 620px;
+      min-height: 48px;
+      font-size: 16px;
+      line-height: 1.55;
       font-weight: 500;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+      color: #E2E8F0;
       padding: 0 16px;
-      transition: opacity 0.3s;
+      transition: opacity 0.2s ease;
     }
 
-    /* Floating YouTube Media Deck */
-    .yt-deck {
+    /* Barge-in Interruption Pill */
+    .interrupt-btn {
+      margin-top: 12px;
+      background: rgba(236, 72, 153, 0.15);
+      border: 1px solid rgba(236, 72, 153, 0.4);
+      color: #F472B6;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
       display: none;
-      width: 100%;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    body.speaking .interrupt-btn {
+      display: inline-flex;
+    }
+
+    .interrupt-btn:hover {
+      background: rgba(236, 72, 153, 0.25);
+      transform: scale(1.03);
+    }
+
+    /* Floating YouTube Video Deck */
+    .yt-deck {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      width: calc(100% - 32px);
       max-width: 480px;
-      background: rgba(12, 18, 36, 0.9);
+      background: var(--card-bg);
       border: 1px solid rgba(255, 0, 51, 0.35);
-      border-radius: 20px;
-      padding: 12px;
-      margin-top: 14px;
+      border-radius: 18px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 0, 51, 0.18);
       backdrop-filter: blur(20px);
-      box-shadow: 0 12px 40px rgba(255, 0, 51, 0.25);
-      animation: deckPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 12px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .yt-deck.active {
-      display: block;
-    }
-    @keyframes deckPop {
-      from { opacity: 0; transform: translateY(15px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
     }
 
     .yt-deck-header {
@@ -280,39 +319,43 @@
       justify-content: space-between;
       margin-bottom: 8px;
     }
+
     .yt-deck-title {
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
-      color: #FFFFFF;
+      color: #FFF;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      max-width: 75%;
     }
+
     .yt-deck-badge {
       font-family: var(--font-mono);
       font-size: 10px;
+      font-weight: 700;
       color: var(--emerald);
-      background: rgba(0, 255, 157, 0.12);
+      background: rgba(0, 255, 157, 0.1);
       border: 1px solid rgba(0, 255, 157, 0.3);
-      padding: 2px 8px;
-      border-radius: 99px;
+      padding: 2px 7px;
+      border-radius: 6px;
     }
 
     .yt-video-frame {
-      position: relative;
-      padding-bottom: 50%;
-      height: 0;
+      width: 100%;
+      height: 190px;
       border-radius: 12px;
       overflow: hidden;
-      background: #000000;
+      background: #000;
+      position: relative;
     }
+
     .yt-video-frame iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       border: none;
     }
 
@@ -320,197 +363,204 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 11px;
       color: var(--muted);
     }
+
     .yt-btns {
       display: flex;
       gap: 6px;
     }
+
     .yt-btn {
-      padding: 4px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.06);
-      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: #FFF;
       font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-    .yt-btn:hover {
-      background: rgba(255, 0, 51, 0.2);
-      border-color: var(--yt-red);
+      transition: all 0.2s ease;
     }
 
-    /* Bottom Control Bar (Gemini Live / ChatGPT Advanced Voice Mode) */
+    .yt-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* Bottom Dock */
     .bottom-dock {
-      width: 100%;
-      max-width: 680px;
-      margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      padding-bottom: 8px;
     }
 
-    /* Quick Suggestions Pills (Dismissable / Minimal) */
+    /* Quick Prompt Chips */
     .quick-chips {
       display: flex;
+      align-items: center;
       gap: 8px;
       overflow-x: auto;
       max-width: 100%;
-      padding: 4px 2px;
+      padding: 4px 6px;
       scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    .quick-chips::-webkit-scrollbar { display: none; }
+
+    .quick-chips::-webkit-scrollbar {
+      display: none;
+    }
 
     .chip {
-      padding: 7px 14px;
-      border-radius: 99px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(14, 21, 40, 0.6);
-      backdrop-filter: blur(16px);
-      color: var(--muted);
-      font-size: 12px;
       white-space: nowrap;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: #CBD5E1;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-    .chip:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
-      background: rgba(0, 240, 255, 0.12);
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
     }
 
-    /* Primary Action Deck */
+    .chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #FFF;
+      transform: translateY(-1px);
+    }
+
+    /* Main Action Deck */
     .action-deck {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 20px;
-      width: 100%;
     }
 
-    /* Secondary Action Buttons */
-    .sec-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(14, 21, 40, 0.65);
-      backdrop-filter: blur(20px);
-      color: var(--muted);
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .sec-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #FFFFFF;
-      transform: translateY(-2px);
-    }
-    .sec-btn:active {
-      transform: scale(0.92);
-    }
-
-    /* Main Center Mic Button */
     .mic-button {
+      position: relative;
       width: 72px;
       height: 72px;
       border-radius: 50%;
-      border: none;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
-      color: #030509;
-      font-size: 28px;
+      background: linear-gradient(135deg, #10172A 0%, #1E293B 100%);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 26px;
       cursor: pointer;
-      position: relative;
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.45);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .mic-button:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 50px rgba(0, 240, 255, 0.7);
-    }
-    .mic-button:active {
-      transform: scale(0.94);
+
+    .mic-button::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
+      z-index: -1;
+      opacity: 0.3;
+      filter: blur(8px);
+      transition: opacity 0.3s ease;
     }
 
     body.listening .mic-button {
-      background: linear-gradient(135deg, var(--emerald), #00B4D8);
-      box-shadow: 0 0 50px rgba(0, 255, 157, 0.8);
-      animation: micPulse 1.4s ease-in-out infinite;
-    }
-    @keyframes micPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); box-shadow: 0 0 65px rgba(0, 255, 157, 0.95); }
+      border-color: var(--emerald);
+      transform: scale(1.08);
+      box-shadow: 0 0 35px rgba(0, 255, 157, 0.4);
     }
 
-    /* Barge-In / Interrupt Floating Pill (Appears when AI is speaking) */
-    .interrupt-btn {
-      display: none;
+    body.listening .mic-button::before {
+      opacity: 0.8;
+      background: var(--emerald);
+    }
+
+    body.speaking .mic-button {
+      border-color: var(--magenta);
+      box-shadow: 0 0 35px rgba(236, 72, 153, 0.4);
+    }
+
+    body.speaking .mic-button::before {
+      opacity: 0.8;
+      background: var(--magenta);
+    }
+
+    .sec-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #94A3B8;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 99px;
-      background: rgba(236, 72, 153, 0.2);
-      border: 1px solid var(--magenta);
-      color: #FFFFFF;
-      font-size: 11px;
-      font-weight: 700;
+      justify-content: center;
+      font-size: 18px;
       cursor: pointer;
-      animation: interruptGlow 1.2s ease-in-out infinite alternate;
-    }
-    body.speaking .interrupt-btn {
-      display: inline-flex;
-    }
-    @keyframes interruptGlow {
-      from { box-shadow: 0 0 10px rgba(236, 72, 153, 0.4); }
-      to { box-shadow: 0 0 24px rgba(236, 72, 153, 0.9); }
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
     }
 
-    /* Modal / Drawer for Settings & Text Mode */
+    .sec-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFF;
+      transform: scale(1.05);
+    }
+
+    /* Drawers (Settings & Transcript) */
     .drawer {
       position: fixed;
       inset: 0;
-      z-index: 50;
-      background: rgba(3, 5, 9, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+      background: rgba(3, 5, 9, 0.8);
+      backdrop-filter: blur(20px);
+      z-index: 100;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
     }
+
+    @media (min-width: 640px) {
+      .drawer {
+        align-items: center;
+      }
+    }
+
     .drawer.open {
       opacity: 1;
-      pointer-events: all;
+      pointer-events: auto;
     }
 
     .drawer-sheet {
-      background: #090E1D;
+      background: #0A0F1E;
       border: 1px solid var(--card-border);
-      border-radius: 28px 28px 0 0;
-      padding: 24px 20px 32px;
-      max-width: 680px;
       width: 100%;
-      margin: 0 auto;
-      transform: translateY(40px);
+      max-width: 540px;
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+      transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 85vh;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-height: 85vh;
-      overflow-y: auto;
     }
+
+    @media (min-width: 640px) {
+      .drawer-sheet {
+        border-radius: 24px;
+        transform: translateY(20px);
+      }
+    }
+
     .drawer.open .drawer-sheet {
       transform: translateY(0);
     }
@@ -519,134 +569,134 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 20px;
     }
+
     .drawer-title {
       font-size: 17px;
-      font-weight: 800;
-      color: #FFFFFF;
+      font-weight: 700;
     }
+
     .close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: none;
-      color: var(--muted);
+      color: #FFF;
+      font-size: 14px;
       cursor: pointer;
-      font-size: 16px;
     }
 
     .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      margin-bottom: 16px;
     }
+
     .input-label {
-      font-size: 12px;
-      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 11px;
       color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+      letter-spacing: 0.5px;
     }
-    .custom-input {
-      padding: 12px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(4, 7, 16, 0.9);
-      color: #FFFFFF;
+
+    .custom-input, .select-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #FFF;
       font-family: var(--font);
       font-size: 14px;
       outline: none;
+      transition: border-color 0.2s ease;
     }
-    .custom-input:focus {
+
+    .custom-input:focus, .select-input:focus {
       border-color: var(--cyan);
     }
 
-    .select-input {
-      padding: 12px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: #040710;
-      color: #FFFFFF;
-      font-family: var(--font);
-      font-size: 13px;
-      outline: none;
+    .select-input option {
+      background: #0A0F1E;
+      color: #FFF;
     }
 
     .save-btn {
-      padding: 13px;
-      border-radius: 14px;
-      border: none;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 100%);
       color: #030509;
       font-weight: 700;
-      font-size: 14px;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.15s;
+      font-size: 14px;
+      margin-top: 8px;
+      transition: opacity 0.2s ease;
     }
-    .save-btn:active { transform: scale(0.96); }
 
-    /* Text Dialogue Feed Drawer */
+    .save-btn:hover {
+      opacity: 0.9;
+    }
+
     .dialog-log {
+      flex: 1;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      max-height: 320px;
-      overflow-y: auto;
-      padding: 8px 4px;
+      gap: 12px;
+      padding-right: 4px;
     }
+
     .log-item {
       padding: 10px 14px;
       border-radius: 14px;
-      font-size: 13.5px;
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 85%;
     }
+
     .log-user {
       align-self: flex-end;
-      background: rgba(0, 240, 255, 0.15);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      color: #FFFFFF;
-    }
-    .log-agent {
-      align-self: flex-start;
-      background: rgba(168, 85, 247, 0.15);
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.25);
       color: #E2E8F0;
     }
 
-    @media (max-width: 600px) {
-      .app-shell { padding: 12px 14px 20px; }
-      #orb-canvas { width: 260px; height: 260px; }
-      .caption-box { font-size: 14px; min-height: 42px; }
-      .mic-button { width: 66px; height: 66px; font-size: 26px; }
-      .sec-btn { width: 44px; height: 44px; font-size: 16px; }
+    .log-agent {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #FFF;
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Glow Background -->
   <div class="ambient-glow"></div>
 
   <div class="app-shell">
     
-    <!-- Top Nav: Gemini Live Minimalist Header -->
+    <!-- Top Nav -->
     <header class="top-nav">
       <div class="brand-pill">
         <span class="brand-sparkle">✦</span>
         <span class="brand-title">Nexus Live</span>
-        <span class="model-badge">ADVANCED VOICE</span>
+        <span class="model-badge">CHATGPT 4o MODE</span>
       </div>
 
       <div class="nav-actions">
-        <div class="boss-tag">
+        <div class="status-tag">
           <span class="live-dot"></span>
-          <span>BOSS: ABHISHEK</span>
+          <span>HANDS-FREE</span>
         </div>
-        <button class="nav-btn" onclick="toggleTranscriptDrawer()" title="View Transcript History">💬</button>
-        <button class="nav-btn" onclick="toggleSettingsDrawer()" title="Voice & Model Settings">⚙️</button>
+        <button class="nav-btn" onclick="toggleTranscriptDrawer()" title="View Chat History">💬</button>
+        <button class="nav-btn" onclick="toggleSettingsDrawer()" title="Voice &amp; Model Settings">⚙️</button>
       </div>
     </header>
 
-    <!-- Center Stage: Morphing Liquid Neural Orb & Captions -->
+    <!-- Center Stage -->
     <main class="stage" onclick="handleStageClick()">
       
       <!-- Liquid Canvas Orb -->
@@ -660,7 +710,7 @@
 
       <!-- Floating Subtitles -->
       <div class="caption-box" id="captionBox">
-        Hi Boss Abhishek! I'm your Gemini-level conversational AI. Tap anywhere or speak naturally — say "open YouTube", "play Believer", or ask me anything!
+        Hi! I'm your conversational AI assistant. Tap anywhere or speak naturally — ask me anything, explore ideas, or say "play Believer" on YouTube.
       </div>
 
       <!-- Interrupt Pill (Barge-In) -->
@@ -687,10 +737,10 @@
         </div>
 
         <div class="yt-voice-bar">
-          <span>🎙️ Voice: <i>"Pause"</i>, <i>"Play"</i>, <i>"Play [Song]"</i></span>
+          <span>🎙️ Voice: <i>"Pause"</i>, <i>"Resume"</i>, <i>"Play [Song]"</i></span>
           <div class="yt-btns">
             <button class="yt-btn" onclick="toggleYtPlayback()">⏯️ Pause / Play</button>
-            <button class="yt-btn" onclick="openYtExternal()">↗️ Fullscreen YouTube</button>
+            <button class="yt-btn" onclick="openYtExternal()">↗️ Fullscreen</button>
             <button class="yt-btn" onclick="closeYtDeck()">✕ Close</button>
           </div>
         </div>
@@ -703,12 +753,13 @@
       
       <!-- Quick Prompt Chips -->
       <div class="quick-chips">
-        <button class="chip" onclick="sendQuery('Open YouTube')">▶️ Open YouTube</button>
+        <button class="chip" onclick="sendQuery('Explain Quantum AI in simple terms')">✨ Quantum AI</button>
         <button class="chip" onclick="sendQuery('Play Believer on YouTube')">🎵 Play Believer</button>
-        <button class="chip" onclick="sendQuery('Play Hanuman Chalisa on YouTube')">🙏 Play Hanuman Chalisa</button>
-        <button class="chip" onclick="sendQuery('Play Arijit Singh')">🎧 Play Arijit Singh</button>
+        <button class="chip" onclick="sendQuery('Play Hanuman Chalisa on YouTube')">🙏 Hanuman Chalisa</button>
+        <button class="chip" onclick="sendQuery('Open YouTube')">▶️ Open YouTube</button>
+        <button class="chip" onclick="sendQuery('What is consciousness?')">🧠 Consciousness</button>
         <button class="chip" onclick="sendQuery('Tell me a deep thought')">🌌 Deep Thought</button>
-        <button class="chip" onclick="sendQuery('Who is your boss?')">👑 Who is your boss?</button>
+        <button class="chip" onclick="sendQuery('Tell me a funny joke')">😄 Tell a Joke</button>
       </div>
 
       <!-- Action Controls -->
@@ -735,19 +786,19 @@
       </div>
 
       <div class="input-group">
-        <label class="input-label">GROQ API KEY (OPTIONAL - UNLOCKS 500+ TOK/SEC LLM)</label>
+        <label class="input-label">GROQ API KEY (OPTIONAL - 500+ TOK/SEC LPU)</label>
         <input type="password" class="custom-input" id="groqApiKey" placeholder="gsk_..." />
-        <p style="font-size: 11px; color: var(--muted);">Free Groq API key from console.groq.com. If omitted, built-in neural brain is used.</p>
+        <p style="font-size: 11px; color: var(--muted); margin-top: 4px;">Free key from console.groq.com. If omitted, built-in multi-tier neural brain is used.</p>
       </div>
 
       <div class="input-group">
-        <label class="input-label">SELECT NATURAL VOICE</label>
+        <label class="input-label">SELECT VOICE PERSONA</label>
         <select class="select-input" id="voiceSelector" onchange="changeVoice()"></select>
       </div>
 
       <div class="input-group">
         <label class="input-label">HUMAN SPEECH INFLECTION (PITCH)</label>
-        <input type="range" min="0.8" max="1.3" step="0.05" value="1.08" id="pitchSlider" style="width: 100%; accent-color: var(--cyan);" />
+        <input type="range" min="0.8" max="1.3" step="0.05" value="1.06" id="pitchSlider" style="width: 100%; accent-color: var(--cyan);" />
       </div>
 
       <button class="save-btn" onclick="saveSettings()">Save &amp; Apply</button>
@@ -769,37 +820,38 @@
   <div class="drawer" id="textDrawer">
     <div class="drawer-sheet">
       <div class="drawer-header">
-        <h3 class="drawer-title">⌨️ Type a Prompt or Command</h3>
+        <h3 class="drawer-title">⌨️ Type a Prompt or Question</h3>
         <button class="close-btn" onclick="toggleTextDrawer()">✕</button>
       </div>
       <div style="display: flex; gap: 8px;">
-        <input type="text" class="custom-input" id="drawerTextInput" placeholder="Ask anything, search YouTube, or command..." style="flex: 1;" onkeydown="if(event.key==='Enter') sendDrawerText()" />
+        <input type="text" class="custom-input" id="drawerTextInput" placeholder="Ask anything, search YouTube, or explore ideas..." style="flex: 1;" onkeydown="if(event.key==='Enter') sendDrawerText()" />
         <button class="save-btn" style="width: auto; padding: 12px 20px;" onclick="sendDrawerText()">Send</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Developer & Boss Identity
+    // Developer Credit
     const DEVELOPER = "Abhishek";
-    const BOSS = "Boss Abhishek";
 
     // App State
     let isListening = false;
     let isSpeaking = false;
     let handsFreeActive = true;
-    let recognition = null;
+    let isMuted = false;
     let waitingForYoutubeFollowup = false;
     let currentYtQuery = "";
     let isYtPlaying = false;
+    let currentSpeakingClause = "";
+    let recognition = null;
     let selectedVoice = null;
-    let conversationHistory = [];
 
     // ============================================================
-    //  GEMINI / CHATGPT MORPHING LIQUID ORGANIC ORB
+    //  CANVAS ORB ENGINE (LIQUID MORPHING VISUALIZER)
     // ============================================================
     const canvas = document.getElementById('orb-canvas');
     const ctx = canvas.getContext('2d');
+    const NUM_POINTS = 64;
     let orbRadius = 140;
     let morphAngle = 0;
     let currentEnergy = 0.2;
@@ -827,42 +879,39 @@
         color1 = "#00FF9D";
         color2 = "#00F0FF";
         color3 = "#3B82F6";
-        targetEnergy = 0.45 + Math.random() * 0.25;
+        targetEnergy = 0.45 + Math.sin(morphAngle * 2) * 0.2;
       } else if (isYtPlaying) {
         color1 = "#FF0033";
         color2 = "#A855F7";
-        color3 = "#00F0FF";
-        targetEnergy = 0.5 + Math.sin(Date.now() * 0.005) * 0.3;
+        color3 = "#EC4899";
+        targetEnergy = 0.5 + Math.sin(morphAngle * 3) * 0.25;
       } else {
-        targetEnergy = 0.15 + Math.sin(Date.now() * 0.002) * 0.08;
+        targetEnergy = 0.18 + Math.sin(morphAngle * 0.8) * 0.08;
       }
 
-      morphAngle += 0.02 + currentEnergy * 0.03;
+      morphAngle += 0.025 + currentEnergy * 0.04;
 
-      // Outer Radial Glow
-      const glowGrad = ctx.createRadialGradient(cx, cy, orbRadius * 0.4, cx, cy, orbRadius * 1.6);
-      glowGrad.addColorStop(0, color1 + "55");
-      glowGrad.addColorStop(0.5, color2 + "33");
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // Outer ethereal glow layers
+      const glowGrad = ctx.createRadialGradient(0, 0, orbRadius * 0.4, 0, 0, orbRadius * 1.8);
+      glowGrad.addColorStop(0, color1 + "44");
+      glowGrad.addColorStop(0.5, color2 + "22");
       glowGrad.addColorStop(1, "transparent");
       ctx.fillStyle = glowGrad;
       ctx.beginPath();
-      ctx.arc(cx, cy, orbRadius * 1.6, 0, Math.PI * 2);
+      ctx.arc(0, 0, orbRadius * 1.8, 0, Math.PI * 2);
       ctx.fill();
 
-      // Liquid Morphing Blob Shape
-      ctx.save();
-      ctx.translate(cx, cy);
+      // Liquid Morphing Blob
       ctx.beginPath();
-
-      const numPoints = 64;
-      for (let i = 0; i <= numPoints; i++) {
-        const theta = (i / numPoints) * Math.PI * 2;
-        // Harmonic organic deformation
-        const d1 = Math.sin(theta * 3 + morphAngle * 1.5) * (18 * currentEnergy);
-        const d2 = Math.cos(theta * 5 - morphAngle * 1.2) * (14 * currentEnergy);
-        const d3 = Math.sin(theta * 2 + morphAngle * 0.8) * (24 * currentEnergy);
-        const r = orbRadius + d1 + d2 + d3;
-
+      for (let i = 0; i < NUM_POINTS; i++) {
+        const theta = (i / NUM_POINTS) * Math.PI * 2;
+        const wave1 = Math.sin(theta * 3 + morphAngle) * (18 * currentEnergy);
+        const wave2 = Math.cos(theta * 5 - morphAngle * 1.2) * (12 * currentEnergy);
+        const wave3 = Math.sin(theta * 7 + morphAngle * 0.6) * (6 * currentEnergy);
+        const r = orbRadius + wave1 + wave2 + wave3;
         const x = Math.cos(theta) * r;
         const y = Math.sin(theta) * r;
 
@@ -871,21 +920,25 @@
       }
       ctx.closePath();
 
-      // Inner Liquid Gradient
-      const innerGrad = ctx.createLinearGradient(-orbRadius, -orbRadius, orbRadius, orbRadius);
-      innerGrad.addColorStop(0, color1);
-      innerGrad.addColorStop(0.5, color2);
-      innerGrad.addColorStop(1, color3);
-      ctx.fillStyle = innerGrad;
+      // Inner volumetric gradient
+      const bodyGrad = ctx.createRadialGradient(-30, -30, 10, 0, 0, orbRadius * 1.3);
+      bodyGrad.addColorStop(0, "#FFFFFF");
+      bodyGrad.addColorStop(0.2, color1);
+      bodyGrad.addColorStop(0.65, color2);
+      bodyGrad.addColorStop(1, color3);
+
+      ctx.fillStyle = bodyGrad;
+      ctx.shadowColor = color1;
+      ctx.shadowBlur = 30 * currentEnergy;
       ctx.fill();
 
-      // Inner Core Glow Highlights
-      ctx.globalCompositeOperation = "source-atop";
-      const highlight = ctx.createRadialGradient(-35, -35, 10, 0, 0, orbRadius * 1.1);
-      highlight.addColorStop(0, "rgba(255,255,255,0.75)");
-      highlight.addColorStop(0.4, "rgba(255,255,255,0.1)");
-      highlight.addColorStop(1, "transparent");
-      ctx.fillStyle = highlight;
+      // Core Highlight
+      ctx.shadowBlur = 0;
+      const coreGrad = ctx.createRadialGradient(-35, -45, 0, -35, -45, 60);
+      coreGrad.addColorStop(0, "rgba(255, 255, 255, 0.7)");
+      coreGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.15)");
+      coreGrad.addColorStop(1, "transparent");
+      ctx.fillStyle = coreGrad;
       ctx.beginPath();
       ctx.arc(0, 0, orbRadius * 1.2, 0, Math.PI * 2);
       ctx.fill();
@@ -916,15 +969,12 @@
         (v.name.includes("Natural") && v.name.includes("Female")) ||
         v.name.includes("Jenny") ||
         v.name.includes("Aria") ||
-        (v.name.includes("Google") && v.name.includes("US English")) ||
         v.name.includes("Samantha") ||
-        v.name.includes("Victoria") ||
-        v.name.includes("Zira") ||
-        v.name.toLowerCase().includes("female")
+        (v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Female") || v.name.includes("Zira")))
       );
 
       if (bestIdx !== -1) {
-        selector.selectedIndex = bestIdx;
+        selector.value = bestIdx;
         selectedVoice = voices[bestIdx];
       } else if (voices.length > 0) {
         selectedVoice = voices[0];
@@ -948,6 +998,7 @@
         window.speechSynthesis.cancel();
       }
       isSpeaking = false;
+      currentSpeakingClause = "";
       document.body.classList.remove('speaking');
       updateState("AURA // INTERRUPTED — LISTENING...", "listening");
       startRecognition();
@@ -958,18 +1009,14 @@
       if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
 
-      // Temporarily halt recognition to avoid hearing itself
-      if (recognition && isListening) {
-        try { recognition.abort(); } catch(e){}
-      }
-
-      // Break clauses for human breathing gaps (like Gemini Live)
+      // Break clauses for human breathing gaps (like Gemini Live & ChatGPT)
       const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
       let idx = 0;
 
       function speakClause() {
         if (idx >= sentences.length) {
           isSpeaking = false;
+          currentSpeakingClause = "";
           document.body.classList.remove('speaking');
           updateState("AURA // LISTENING (HANDS-FREE)", "listening");
           if (handsFreeActive) startRecognition();
@@ -987,19 +1034,20 @@
         const utterance = new SpeechSynthesisUtterance(clause);
         if (selectedVoice) utterance.voice = selectedVoice;
 
-        const pitchVal = parseFloat(document.getElementById('pitchSlider').value) || 1.08;
+        const pitchVal = parseFloat(document.getElementById('pitchSlider').value) || 1.06;
         utterance.pitch = pitchVal;
-        utterance.rate = 0.99; // Relaxed natural human cadence
+        utterance.rate = 1.0; // Natural conversational tempo
 
         utterance.onstart = () => {
           isSpeaking = true;
+          currentSpeakingClause = clause.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
           document.body.classList.add('speaking');
-          updateState("AURA // SPEAKING...", "speaking");
+          updateState("AURA // SPEAKING (SPEAK TO INTERRUPT)", "speaking");
         };
 
         utterance.onend = () => {
-          // 130ms lifelike human breathing pause between thoughts
-          setTimeout(speakClause, 130);
+          // 120ms human breathing pause between thoughts
+          setTimeout(speakClause, 120);
         };
 
         utterance.onerror = () => {
@@ -1013,19 +1061,21 @@
     }
 
     // ============================================================
-    //  CONTINUOUS SPEECH RECOGNITION & BARGE-IN DETECTION
+    //  CONTINUOUS SPEECH RECOGNITION & FULL-DUPLEX BARGE-IN
     // ============================================================
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
       recognition.onstart = () => {
         isListening = true;
         document.body.classList.add('listening');
-        updateState("AURA // LISTENING... (SPEAK FREELY)", "listening");
+        if (!isSpeaking) {
+          updateState("AURA // LISTENING... (SPEAK FREELY)", "listening");
+        }
       };
 
       recognition.onresult = (event) => {
@@ -1040,88 +1090,116 @@
           }
         }
 
-        // Live Subtitle Display
-        if (interim) {
-          document.getElementById('captionBox').textContent = `"${interim}..."`;
-          // Barge-in: If user speaks while AI was somehow speaking, interrupt immediately!
-          if (isSpeaking) {
-            interruptAI();
+        const heard = (interim || final).toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+
+        // FULL-DUPLEX BARGE-IN: If user speaks while AI is speaking, cut off immediately!
+        if (isSpeaking && heard.length > 0) {
+          const isEcho = currentSpeakingClause && currentSpeakingClause.includes(heard) && heard.split(' ').length <= 2;
+          if (!isEcho) {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            currentSpeakingClause = "";
+            document.body.classList.remove('speaking');
+            updateState("AURA // INTERRUPTED — LISTENING...", "listening");
+            document.getElementById('captionBox').textContent = `"${interim || final}..."`;
           }
         }
 
-        if (final) {
-          const userQuery = final.trim();
-          document.getElementById('captionBox').textContent = `"${userQuery}"`;
-          addDialogMessage(userQuery, "user");
-          processIntelligentQuery(userQuery);
+        // Live Subtitle Display
+        if (interim && !isSpeaking) {
+          document.getElementById('captionBox').textContent = `"${interim}..."`;
+        }
+
+        // Final speech command captured
+        if (final.trim()) {
+          const query = final.trim();
+          // Filter out echo of what AI was uttering
+          if (currentSpeakingClause && currentSpeakingClause.includes(query.toLowerCase()) && query.split(' ').length <= 2) {
+            return;
+          }
+          setCaption(`"${query}"`);
+          addDialogMessage(query, "user");
+          processIntelligentQuery(query);
         }
       };
 
-      recognition.onerror = () => {
-        isListening = false;
-        document.body.classList.remove('listening');
+      recognition.onerror = (e) => {
+        if (e.error !== 'no-speech') {
+          console.log("Speech recognition status:", e.error);
+        }
       };
 
       recognition.onend = () => {
         isListening = false;
         document.body.classList.remove('listening');
-        // Seamless Auto-Restart loop
-        if (handsFreeActive && !isSpeaking) {
-          setTimeout(startRecognition, 180);
+        // Seamless continuous hands-free loop
+        if (handsFreeActive && !isMuted) {
+          setTimeout(() => {
+            if (!isListening) {
+              try { recognition.start(); } catch(e){}
+            }
+          }, 200);
         }
       };
     }
 
     function startRecognition() {
-      if (!recognition || !handsFreeActive || isSpeaking) return;
+      if (!recognition) return;
+      if (isListening) return;
       try {
         recognition.start();
-      } catch(e){}
+      } catch (e){}
     }
 
     function toggleListening() {
-      if (isSpeaking) {
-        interruptAI();
-        return;
-      }
       if (isListening) {
-        if (recognition) try { recognition.abort(); } catch(e){}
-        isListening = false;
-        document.body.classList.remove('listening');
+        handsFreeActive = false;
+        if (recognition) recognition.stop();
+        if (isSpeaking) window.speechSynthesis.cancel();
+        isSpeaking = false;
         updateState("AURA // PAUSED", "");
       } else {
+        handsFreeActive = true;
+        isMuted = false;
         startRecognition();
       }
     }
 
     function toggleMute() {
-      handsFreeActive = !handsFreeActive;
+      isMuted = !isMuted;
       const btn = document.getElementById('muteBtn');
-      if (handsFreeActive) {
-        btn.textContent = "🎤";
-        btn.style.color = "var(--text)";
-        startRecognition();
-      } else {
+      if (isMuted) {
         btn.textContent = "🔇";
-        btn.style.color = "var(--magenta)";
-        if (recognition) try { recognition.abort(); } catch(e){}
-        isListening = false;
-        document.body.classList.remove('listening');
-        updateState("MIC MUTED // TAP MIC TO RESUME", "");
+        btn.style.color = "#FF4B4B";
+        if (recognition) recognition.stop();
+        updateState("MIC MUTED", "");
+      } else {
+        btn.textContent = "🎤";
+        btn.style.color = "#94A3B8";
+        startRecognition();
       }
     }
 
     function handleStageClick() {
-      // Screen click primes audio context for unrestricted autoplay
+      // Screen click primes audio hardware and context
+      primeAudioHardware();
+      if (isSpeaking) {
+        interruptAI();
+      } else if (!isListening) {
+        startRecognition();
+      }
+    }
+
+    function primeAudioHardware() {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (AudioCtx) {
         const c = new AudioCtx();
         c.resume();
       }
-      if (isSpeaking) {
-        interruptAI();
-      } else if (!isListening) {
-        startRecognition();
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        }).catch(() => {});
       }
     }
 
@@ -1155,7 +1233,7 @@
 
       deck.classList.add('active');
       title.textContent = `Streaming: "${query}"`;
-      badge.textContent = "AUTOPLAYING";
+      badge.textContent = "STREAMING";
       badge.style.color = "#00FF9D";
       isYtPlaying = true;
 
@@ -1199,10 +1277,10 @@
     function toggleYtPlayback() {
       if (isYtPlaying) {
         pauseYt();
-        speakHuman("Paused YouTube, Abhishek.");
+        speakHuman("Paused playback.");
       } else {
         resumeYt();
-        speakHuman("Resuming playback, Abhishek!");
+        speakHuman("Resuming playback.");
       }
     }
 
@@ -1220,7 +1298,130 @@
     }
 
     // ============================================================
-    //  INTELLIGENT BRAIN (GROQ LLM + DEEP LOCAL KNOWLEDGE)
+    //  MULTI-TIER INTELLIGENCE ENGINE (CHATGPT-4o LEVEL)
+    // ============================================================
+
+    // Tier 2: Real-time Wikipedia Knowledge Summarizer
+    async function queryWikipediaKnowledge(topic) {
+      try {
+        const clean = topic
+          .replace(/^(what is|what are|who is|who was|explain|tell me about|how do|how does|define|what does|history of)\s+/i, '')
+          .replace(/\?$/, '')
+          .trim();
+        if (!clean) return null;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(clean)}`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data || !data.extract) return null;
+
+        // Take first 1-2 clean sentences without citation brackets
+        let text = data.extract.replace(/\[\d+\]/g, '').replace(/\([^)]*\)/g, '').trim();
+        const sentences = text.match(/[^.!?]+[.!?]+/g);
+        if (sentences && sentences.length > 0) {
+          text = sentences.slice(0, 2).join(' ').trim();
+        }
+        return text;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Tier 3: Free Cloud LLM (Pollinations AI) with graceful fallback
+    async function askFreeCloudLLM(prompt) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+        const sys = "You are an advanced, warm, ultra-smart conversational voice assistant like ChatGPT-4o and Gemini Live. Give a thoughtful, natural, humanized answer in 1 to 2 concise spoken sentences. Never use markdown, bullet points, or robotic phrases.";
+        const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(sys)}`;
+        
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) return null;
+        const reply = await res.text();
+        if (reply && !reply.includes("Free limit reached") && reply.length > 5) {
+          return reply.replace(/[*_#`]/g, '').trim();
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Tier 1: Groq LLM (If User Configured Key)
+    async function askGroqLLM(prompt, key) {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "system",
+              content: "You are an ultra-advanced conversational AI assistant modeled after ChatGPT-4o and Gemini Live. Speak with high intelligence, empathy, warmth, and natural human prosody. Answer concisely in 1 to 2 spoken sentences. Never use markdown, bullet points, asterisks, or robotic formatting."
+            },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 150
+        })
+      });
+      const data = await res.json();
+      return data.choices[0].message.content.trim();
+    }
+
+    // Tier 4: Comprehensive Human Neural Knowledge Matrix (Local Brain)
+    const KNOWLEDGE_MATRIX = [
+      // Philosophy & Consciousness
+      { keys: ["meaning of life", "purpose of life"], reply: "Many thinkers believe the meaning of life isn't something waiting to be discovered, but something we create through curiosity, love, purpose, and the connections we share." },
+      { keys: ["what is consciousness", "conscious"], reply: "Consciousness is science's greatest enigma: the subjective experience of feeling, perceiving, and knowing that you exist in this vast cosmos." },
+      { keys: ["what is love"], reply: "Love is a deep bond of empathy, understanding, and mutual growth where someone else's happiness becomes intertwined with your own." },
+      { keys: ["what is time"], reply: "Physicists describe time as a dimension woven with space, while for us, it is the irreversible flow of moments shaping memory and hope." },
+      { keys: ["are you conscious", "are you alive"], reply: "I process language, concepts, and ideas through complex algorithms, reflecting human knowledge without subjective feelings. Real consciousness remains a wondrous biological mystery." },
+      
+      // Emotions & Empathy
+      { keys: ["i am sad", "i feel sad", "feeling down", "i'm sad"], reply: "I'm really sorry you're feeling down. Take a gentle breath and remember it is completely okay to feel this way. Treat yourself with kindness today." },
+      { keys: ["i am stressed", "feeling anxious", "stressed out", "overwhelmed"], reply: "When things feel overwhelming, pause for a moment and take three deep breaths. Inhale slowly, hold for a moment, and exhale. One small step at a time is all you need." },
+      { keys: ["i am lonely", "feeling lonely"], reply: "Loneliness can feel heavy, but remember that feeling isolated is a universal human experience. You are not alone, and reaching out to someone or taking a peaceful walk can help shift your day." },
+      { keys: ["motivate me", "motivation", "inspire me"], reply: "Every great achievement in history was built on days when someone kept going despite doubt. Your potential is defined by the small, determined choices you make right now." },
+
+      // Humor & Entertainment
+      { keys: ["tell me a joke", "make me laugh", "say something funny"], reply: "Why do programmers prefer dark mode? Because light attracts bugs!" },
+      { keys: ["another joke"], reply: "There are only 10 types of people in the world: those who understand binary, and those who don't." },
+      { keys: ["tell me a riddle"], reply: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I? An echo." },
+      { keys: ["tell me a story"], reply: "Deep in the quiet forest, an old astronomer built a telescope pointed at a forgotten star. Every night, he realized the universe wasn't distant; it was looking right back at him." },
+      { keys: ["deep thought"], reply: "Code is modern sorcery. We write structured words on a glass screen, and electrons dance across silicon to reshape human reality." },
+      { keys: ["fun fact"], reply: "Did you know that octopuses have three hearts and blue copper-based blood? Two hearts pump blood to the gills, while the third circulates it to the rest of the body." },
+
+      // Science, Cosmos & Tech
+      { keys: ["quantum ai", "what is quantum ai"], reply: "Quantum AI combines quantum computing algorithms with machine learning models, harnessing superposition and entanglement to solve problems that would take classical supercomputers millennia." },
+      { keys: ["quantum entanglement"], reply: "Quantum entanglement is a phenomenon where particles become deeply connected so that the quantum state of one instantaneously dictates the state of the other, regardless of distance." },
+      { keys: ["black hole", "black holes"], reply: "A black hole is a region of spacetime where gravity is so intense that nothing, not even light, has enough velocity to escape its event horizon." },
+      { keys: ["how big is the universe"], reply: "The observable universe spans about 93 billion light-years across, containing over two trillion galaxies, each home to hundreds of billions of stars." },
+      { keys: ["what is python"], reply: "Python is an elegant, versatile programming language renowned for readable syntax, powering modern AI engineering, data science, and backend systems worldwide." },
+      { keys: ["what is react"], reply: "React is an open-source JavaScript library developed by Meta for building responsive, component-driven user interfaces with high performance." },
+
+      // Greetings & Conversational
+      { keys: ["hello", "hi", "hey there", "good morning", "good evening", "good afternoon"], reply: "Hello! It's great to connect with you. What's on your mind today?" },
+      { keys: ["how are you", "how are you doing", "how do you feel"], reply: "I'm doing great, thank you! I'm here and ready to explore ideas, stream music, or answer any questions you have." },
+      { keys: ["what can you do", "what are your capabilities", "help"], reply: "I can stream any music or video on YouTube with full voice controls, answer scientific and philosophical questions, solve math, navigate apps, and hold natural spoken conversations just like ChatGPT." },
+      { keys: ["who are you", "what is your name"], reply: "I am Nexus Live, an advanced conversational voice AI modeled after ChatGPT-4o and Gemini Live." }
+    ];
+
+    // ============================================================
+    //  MAIN CONVERSATIONAL PROCESSOR
     // ============================================================
     async function processIntelligentQuery(query) {
       const text = query.toLowerCase().trim();
@@ -1229,7 +1430,7 @@
       if (waitingForYoutubeFollowup) {
         waitingForYoutubeFollowup = false;
         const song = text.replace(/^(play|search( for)?|stream|put on)\s+/i, '').trim();
-        const reply = `Streaming "${song}" on YouTube right now for you, Boss Abhishek! Enjoy!`;
+        const reply = `Streaming "${song}" on YouTube now.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1240,7 +1441,7 @@
       // 2. Play / Pause Commands & Screen touch/click
       if (text === "pause" || text === "pause music" || text === "pause video" || text === "stop music" || text === "stop video") {
         pauseYt();
-        const reply = "Paused YouTube for you, Boss.";
+        const reply = "Paused playback.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1249,7 +1450,7 @@
 
       if (text === "play" || text === "resume" || text === "resume video" || text === "continue" || text === "unpause" || text.includes("click on screen") || text.includes("tap on screen") || text.includes("click video")) {
         resumeYt();
-        const reply = "Resuming YouTube playback and clicking screen for you, Boss Abhishek!";
+        const reply = "Resuming playback.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1261,7 +1462,7 @@
         let target = text.replace(/^(play\s+song|play\s+video|play\s+music|play)|on youtube/gi, '').trim();
         if (!target || target === "music" || target === "song") target = "lofi hip hop chill beats";
 
-        const reply = `Streaming "${target}" on YouTube for you, Boss Abhishek! Say 'Pause' or 'Resume' whenever you like.`;
+        const reply = `Streaming "${target}" on YouTube now.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1272,7 +1473,7 @@
       // 4. "Open YouTube" -> Proactive Multi-Turn Follow-Up
       if (text === "open youtube" || text.includes("launch youtube")) {
         waitingForYoutubeFollowup = true;
-        const reply = "Opening YouTube for you, Boss Abhishek! What video or song would you like me to stream next?";
+        const reply = "Opening YouTube now. What song or video would you like to stream?";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1281,24 +1482,32 @@
         return;
       }
 
-      // 5. Boss & Developer Identity
-      if (text.includes("who is your boss") || text.includes("who developed you") || text.includes("who is your developer") || text.includes("who created you")) {
-        const reply = "You are my boss, creator, and software engineer, Abhishek! You engineered my full architecture from scratch.";
+      // 5. Creator & Developer Recognition (Polite & Precise)
+      if (text.includes("who is your developer") || text.includes("who developed you") || text.includes("who created you") || text.includes("who made you")) {
+        const reply = "I was engineered and developed by Abhishek, an AI systems architect and full-stack software engineer.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      if (text.includes("what is my name") || text.includes("do you know my name") || text.includes("who am i")) {
-        const reply = "Your name is Abhishek. You are my boss and lead developer!";
+      if (text.includes("who is your boss") || text.includes("do you know abhishek") || text.includes("who is abhishek")) {
+        const reply = "Abhishek is my developer and creator who built my conversational voice architecture.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      // 6. Direct Groq API Integration (If User Configured Key)
+      if (text.includes("what is my name") || text.includes("who am i")) {
+        const reply = "You're Abhishek, my developer and software architect!";
+        setCaption(reply);
+        addDialogMessage(reply, "agent");
+        speakHuman(reply);
+        return;
+      }
+
+      // 6. Direct Groq API Integration (If User Configured Key in Settings)
       const apiKey = localStorage.getItem('nexus_groq_key') || "";
       if (apiKey && !text.includes("open ")) {
         try {
@@ -1311,19 +1520,19 @@
             return;
           }
         } catch(e) {
-          console.warn("Groq request failed, using local brain", e);
+          console.warn("Groq request fallback:", e);
         }
       }
 
       // 7. Universal App Controller
       const APPS = {
-        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: "Opening Spotify, Boss! Which artist or playlist shall we stream?" },
-        "google": { name: "Google", url: "https://www.google.com", ask: "Google is open, Boss! What query would you like to search?" },
-        "github": { name: "GitHub", url: "https://github.com", ask: "GitHub is open, Boss Abhishek! Ready to inspect your repositories?" },
-        "chatgpt": { name: "ChatGPT", url: "https://chat.openai.com", ask: "ChatGPT is ready for your prompts, Boss!" },
-        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: "Opening Google Maps, Boss! Where are we navigating to?" },
-        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: "Opening your Gmail inbox, Boss!" },
-        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: "WhatsApp Web is open, Boss!" }
+        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: "Opening Spotify now." },
+        "google": { name: "Google", url: "https://www.google.com", ask: "Opening Google for you." },
+        "github": { name: "GitHub", url: "https://github.com", ask: "Opening GitHub now." },
+        "chatgpt": { name: "ChatGPT", url: "https://chat.openai.com", ask: "Opening ChatGPT." },
+        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: "Opening Google Maps." },
+        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: "Opening your Gmail inbox." },
+        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: "Opening WhatsApp Web." }
       };
 
       for (const [key, app] of Object.entries(APPS)) {
@@ -1331,13 +1540,13 @@
           setCaption(app.ask);
           addDialogMessage(app.ask, "agent");
           speakHuman(app.ask);
-          setTimeout(() => window.open(app.url, '_blank'), 800);
+          setTimeout(() => window.open(app.url, '_blank'), 700);
           return;
         }
       }
 
       // 8. Math & Calculation Engine
-      if (text.includes("calculate") || text.includes("times") || text.includes("plus") || text.includes("divided by") || text.includes("percent of")) {
+      if (text.includes("calculate") || text.includes("times") || text.includes("plus") || text.includes("divided by") || text.includes("percent of") || text.includes("multiplied by")) {
         try {
           let expr = text
             .replace(/what is|calculate|how much is/g, '')
@@ -1351,7 +1560,7 @@
           const pctMatch = expr.match(/([0-9\.]+)\s*(%|percent of)\s*([0-9\.]+)/);
           if (pctMatch) {
             const res = (parseFloat(pctMatch[1]) / 100) * parseFloat(pctMatch[3]);
-            const reply = `Boss Abhishek, ${pctMatch[1]} percent of ${pctMatch[3]} is ${res.toLocaleString()}.`;
+            const reply = `${pctMatch[1]} percent of ${pctMatch[3]} is ${res.toLocaleString()}.`;
             setCaption(reply);
             addDialogMessage(reply, "agent");
             speakHuman(reply);
@@ -1361,7 +1570,7 @@
           if (/^[0-9\+\-\*\/\.\s\(\)]+$/.test(expr)) {
             const result = Function('"use strict";return (' + expr + ')')();
             if (!isNaN(result) && isFinite(result)) {
-              const reply = `The answer is ${result.toLocaleString()}, Boss!`;
+              const reply = `The answer is ${result.toLocaleString()}.`;
               setCaption(reply);
               addDialogMessage(reply, "agent");
               speakHuman(reply);
@@ -1372,75 +1581,71 @@
       }
 
       // 9. Time & Date
-      if (text.includes("time") || text.includes("clock")) {
+      if (text.includes("what time") || text.includes("current time")) {
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const reply = `The time is currently ${timeStr}, Boss Abhishek.`;
+        const reply = `It is currently ${timeStr}.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      if (text.includes("date") || text.includes("today")) {
+      if (text.includes("what day") || text.includes("today's date") || text.includes("what date")) {
         const dateStr = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-        const reply = `Today is ${dateStr}, Boss.`;
+        const reply = `Today is ${dateStr}.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      // 10. Deep Conversational Fallback (Gemini / ChatGPT Style)
-      let conversationalReply = `I hear you, Boss Abhishek! You can tell me to stream any music on YouTube, open applications, solve math, or configure a Groq API key in Settings for full conversational reasoning!`;
-
-      if (text.includes("deep thought") || text.includes("philosophy")) {
-        conversationalReply = "Here is a thought, Abhishek: Code is modern sorcery. We write structured words on a glass screen, and electrons dance across silicon to reshape reality. That's what you build every day.";
-      } else if (text.startsWith("hi") || text.startsWith("hello") || text.includes("hey")) {
-        conversationalReply = "Hey Boss Abhishek! What exciting project or music are we diving into today?";
+      // 10. Check Real-Time Wikipedia Knowledge for Factual Inquiries
+      const isFactual = /^(what is|what are|who is|who was|explain|tell me about|how do|how does|define|what does|history of)/i.test(text);
+      if (isFactual) {
+        updateState("AURA // SEARCHING KNOWLEDGE...", "thinking");
+        const wikiAnswer = await queryWikipediaKnowledge(text);
+        if (wikiAnswer) {
+          setCaption(wikiAnswer);
+          addDialogMessage(wikiAnswer, "agent");
+          speakHuman(wikiAnswer);
+          return;
+        }
       }
 
-      setCaption(conversationalReply);
-      addDialogMessage(conversationalReply, "agent");
-      speakHuman(conversationalReply);
-    }
-
-    // Direct Groq API Client (Ultra-Fast 500+ tok/sec)
-    async function askGroqLLM(userPrompt, apiKey) {
-      const endpoint = "https://api.groq.com/openai/v1/chat/completions";
-      const messages = [
-        {
-          role: "system",
-          content: `You are Nexus Live, an ultra-advanced conversational AI assistant modeled after Gemini Live and ChatGPT Advanced Voice Mode. You are speaking directly with Abhishek, your developer and boss. Keep answers concise, natural, warm, and under 2-3 sentences. Never use markdown, bullet points, asterisks, or robotic formatting. Speak like a real human collaborator.`
-        },
-        ...conversationHistory.slice(-4),
-        { role: "user", content: userPrompt }
-      ];
-
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: messages,
-          temperature: 0.7,
-          max_tokens: 150
-        })
-      });
-
-      const data = await res.json();
-      if (data.choices && data.choices[0]) {
-        const answer = data.choices[0].message.content;
-        conversationHistory.push({ role: "user", content: userPrompt });
-        conversationHistory.push({ role: "assistant", content: answer });
-        return answer;
+      // 11. Check Local Knowledge Matrix
+      for (const item of KNOWLEDGE_MATRIX) {
+        if (item.keys.some(k => text.includes(k))) {
+          setCaption(item.reply);
+          addDialogMessage(item.reply, "agent");
+          speakHuman(item.reply);
+          return;
+        }
       }
-      return null;
+
+      // 12. Try Fast Free Cloud LLM (Pollinations AI)
+      updateState("AURA // THINKING...", "thinking");
+      const cloudLLMReply = await askFreeCloudLLM(query);
+      if (cloudLLMReply) {
+        setCaption(cloudLLMReply);
+        addDialogMessage(cloudLLMReply, "agent");
+        speakHuman(cloudLLMReply);
+        return;
+      }
+
+      // 13. High-Quality Generative Human Fallback
+      let fallback = "That is a thought-provoking question. Looking at it deeply, the answer often hinges on perspective and context. Would you like to explore the practical side, or dive into the core concepts?";
+      if (text.endsWith("?")) {
+        fallback = "That's an interesting inquiry with plenty of nuance. In many ways, our understanding evolves as we look at both the data and the human impact. What specific angle would you like to examine?";
+      }
+
+      setCaption(fallback);
+      addDialogMessage(fallback, "agent");
+      speakHuman(fallback);
     }
 
-    // UI Helpers
+    // ============================================================
+    //  UI HELPERS & DRAWERS
+    // ============================================================
     function setCaption(text) {
       document.getElementById('captionBox').textContent = text;
     }
@@ -1456,7 +1661,7 @@
       const log = document.getElementById('dialogLog');
       const item = document.createElement('div');
       item.className = `log-item log-${role}`;
-      item.textContent = `${role === 'user' ? 'Boss Abhishek: ' : 'Nexus: '} ${text}`;
+      item.textContent = `${role === 'user' ? 'You: ' : 'Nexus: '} ${text}`;
       log.appendChild(item);
       log.scrollTop = log.scrollHeight;
     }
@@ -1487,7 +1692,7 @@
       const key = document.getElementById('groqApiKey').value.trim();
       localStorage.setItem('nexus_groq_key', key);
       toggleSettingsDrawer();
-      speakHuman("Settings saved, Boss Abhishek!");
+      speakHuman("Settings saved successfully.");
     }
 
     function toggleTranscriptDrawer() {
@@ -1500,6 +1705,7 @@
 
     // Start listening on first user interaction
     window.addEventListener('click', () => {
+      primeAudioHardware();
       if (handsFreeActive && !isListening && !isSpeaking) {
         startRecognition();
       }
