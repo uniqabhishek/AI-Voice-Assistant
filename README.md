@@ -43,13 +43,17 @@ sequenceDiagram
 
 ## 🚀 Key Highlights & Capabilities
 
-- **Sub-Second Voice-to-Voice Latency**: Combines Deepgram's streaming STT/TTS with Groq's high-throughput LPU inference to achieve realistic, conversational dialogue speed without awkward pauses.
+- **ChatGPT-4o & Gemini Live Experience ([Test Live](https://uniqabhishek.github.io/AI-Voice-Assistant/))**:
+  - **Full-Duplex Speech Barge-In**: Never wait for the agent to finish talking; speak naturally at any moment to interrupt instantly (`window.speechSynthesis.cancel()`).
+  - **Fluid Morphing Neural Orb**: 64-point harmonic Canvas visualizer dynamically reacting to speech frequencies across Cyan/Emerald (listening), Magenta/Purple (speaking), and Coral Red (streaming) states.
+  - **Dynamic YouTube Voice Streaming**: Instant hands-free streaming (*"Play Believer"*, *"Play Hanuman Chalisa"*, *"Play Arijit Singh"*) with voice playback controls (*"Pause"*, *"Resume"*, *"Play"*).
+  - **Multi-Tier Intelligence Brain**: Combines Wikipedia REST API for instant real-time definitions, fast Cloud LLM for open creativity, a 50+ topic local conversational matrix, and Groq LPU Llama-3.3-70B acceleration.
+- **Sub-Second Voice-to-Voice Latency**: Combines Deepgram's streaming STT/TTS with Groq's high-throughput LPU inference (500+ tok/sec) to achieve realistic, conversational dialogue speed without awkward pauses.
 - **Full-Duplex WebSocket Audio Bridge**: Custom `/ws/voice` gateway built on `flask-sock` handling bidirectional binary audio frames, user transcripts, and agent events.
 - **Hybrid Intelligence Architecture**:
   1. **Instant Command Matcher (`/api/command`)**: Token-aware weighted scoring engine matching intents locally against `data/knowledge.json` for zero-latency system navigation (YouTube, Google, navigation).
   2. **Groq LLM Fallback**: Open-ended questions seamlessly route to Groq's high-speed inference engine for deep reasoning.
 - **Dynamic Hot-Reloading (`/api/reload`)**: Update and reload the knowledge base JSON at runtime without restarting the Flask daemon.
-- **Modern Responsive Web GUI**: Browser interface featuring real-time audio visualization, live user speech transcription, agent response text, and manual text input controls.
 
 ---
 
