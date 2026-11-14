@@ -140,6 +140,29 @@
       gap: 10px;
     }
 
+    .lang-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 153, 51, 0.12);
+      border: 1px solid rgba(255, 153, 51, 0.35);
+      color: #FFB020;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .lang-pill:hover {
+      background: rgba(255, 153, 51, 0.22);
+      border-color: rgba(255, 153, 51, 0.6);
+      transform: translateY(-1px);
+    }
+
     .status-tag {
       display: inline-flex;
       align-items: center;
@@ -687,6 +710,10 @@
       </div>
 
       <div class="nav-actions">
+        <button class="lang-pill" id="langPill" onclick="cycleLanguage()" title="Language Mode: Auto (Hindi + Eng) / Hindi / English">
+          <span id="langFlag">🌐</span>
+          <span id="langText">Auto (हिन्दी + Eng)</span>
+        </button>
         <div class="status-tag">
           <span class="live-dot"></span>
           <span>HANDS-FREE</span>
@@ -705,17 +732,17 @@
       <!-- Dynamic State Pill -->
       <div class="state-pill" id="statePill">
         <span id="stateIcon">✨</span>
-        <span id="stateText">AURA // TAP ANYWHERE TO START</span>
+        <span id="stateText">AURA // द्विभाषी (HINDI + ENGLISH) — बोलें</span>
       </div>
 
       <!-- Floating Subtitles -->
       <div class="caption-box" id="captionBox">
-        Hi! I'm your conversational AI assistant. Tap anywhere or speak naturally — ask me anything, explore ideas, or say "play Believer" on YouTube.
+        Hi Abhishek! I speak Hindi and English simultaneously. Ask in Hindi, I'll reply in Hindi — ask in English, I'll reply in English! (हिंदी में बोलें या English में)
       </div>
 
       <!-- Interrupt Pill (Barge-In) -->
       <button class="interrupt-btn" id="interruptBtn" onclick="interruptAI()">
-        <span>✋ Tap or say "stop" to interrupt</span>
+        <span>✋ Tap or say "रुको" / "stop" to interrupt</span>
       </button>
 
       <!-- Floating YouTube Streaming Deck -->
@@ -752,14 +779,15 @@
     <footer class="bottom-dock">
       
       <!-- Quick Prompt Chips -->
-      <div class="quick-chips">
-        <button class="chip" onclick="sendQuery('Explain Quantum AI in simple terms')">✨ Quantum AI</button>
+      <div class="quick-chips" id="quickChips">
         <button class="chip" onclick="sendQuery('Play Believer on YouTube')">🎵 Play Believer</button>
-        <button class="chip" onclick="sendQuery('Play Hanuman Chalisa on YouTube')">🙏 Hanuman Chalisa</button>
+        <button class="chip" onclick="sendQuery('केसरीया गाना बजाओ')">🎵 केसरीया गाना</button>
+        <button class="chip" onclick="sendQuery('हनुमान चालीसा बजाओ')">🙏 हनुमान चालीसा</button>
         <button class="chip" onclick="sendQuery('Open YouTube')">▶️ Open YouTube</button>
-        <button class="chip" onclick="sendQuery('What is consciousness?')">🧠 Consciousness</button>
-        <button class="chip" onclick="sendQuery('Tell me a deep thought')">🌌 Deep Thought</button>
-        <button class="chip" onclick="sendQuery('Tell me a funny joke')">😄 Tell a Joke</button>
+        <button class="chip" onclick="sendQuery('Explain Quantum AI in simple terms')">✨ Quantum AI</button>
+        <button class="chip" onclick="sendQuery('एक चुटकुला सुनाओ')">😄 चुटकुला</button>
+        <button class="chip" onclick="sendQuery('Who is your developer?')">👑 Who developed you?</button>
+        <button class="chip" onclick="sendQuery('तुम्हारा डेवलपर कौन है?')">👑 तुम्हारा डेवलपर?</button>
       </div>
 
       <!-- Action Controls -->
@@ -789,6 +817,15 @@
         <label class="input-label">GROQ API KEY (OPTIONAL - 500+ TOK/SEC LPU)</label>
         <input type="password" class="custom-input" id="groqApiKey" placeholder="gsk_..." />
         <p style="font-size: 11px; color: var(--muted); margin-top: 4px;">Free key from console.groq.com. If omitted, built-in multi-tier neural brain is used.</p>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">CONVERSATIONAL LANGUAGE / भाषा</label>
+        <select class="select-input" id="languageSelector" onchange="onLanguageSelectChange()">
+          <option value="auto" selected>🌐 Auto Bilingual (Hindi + English Simultaneously)</option>
+          <option value="hi">🇮🇳 Hindi Only (केवल हिन्दी)</option>
+          <option value="en">🇺🇸 English Only</option>
+        </select>
       </div>
 
       <div class="input-group">
@@ -835,6 +872,7 @@
     const DEVELOPER = "Abhishek";
 
     // App State
+    let currentLangMode = localStorage.getItem('nexus_lang_mode') || 'auto'; // 'auto' | 'hi' | 'en'
     let isListening = false;
     let isSpeaking = false;
     let handsFreeActive = true;
@@ -844,6 +882,8 @@
     let isYtPlaying = false;
     let currentSpeakingClause = "";
     let recognition = null;
+    let selectedHindiVoice = null;
+    let selectedEnglishVoice = null;
     let selectedVoice = null;
     let fullSpokenText = "";
     let speechStartTime = 0;
@@ -964,17 +1004,29 @@
       const voices = window.speechSynthesis.getVoices();
       if (!voices || voices.length === 0) return;
       const selector = document.getElementById('voiceSelector');
-      selector.innerHTML = '';
+      if (selector) selector.innerHTML = '';
 
       voices.forEach((v, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = `${v.name} (${v.lang})`;
-        selector.appendChild(opt);
+        if (selector) {
+          const opt = document.createElement('option');
+          opt.value = i;
+          opt.textContent = `${v.name} (${v.lang})`;
+          selector.appendChild(opt);
+        }
       });
 
-      // Find top Natural Female voice
-      const bestIdx = voices.findIndex(v => 
+      // 1. Natural Hindi female voice
+      const hindiIdx = voices.findIndex(v => 
+        (v.lang.startsWith('hi') && (v.name.includes("Swara") || v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Female") || v.name.includes("Kalpana") || v.name.includes("Lekha"))) ||
+        v.lang.startsWith('hi') ||
+        (v.lang === 'en-IN' && (v.name.includes("Neerja") || v.name.includes("Heera") || v.name.includes("Female") || v.name.includes("Google")))
+      );
+      if (hindiIdx !== -1) {
+        selectedHindiVoice = voices[hindiIdx];
+      }
+
+      // 2. Natural English female voice
+      const engIdx = voices.findIndex(v => 
         (v.name.includes("Natural") && (v.name.includes("Female") || v.name.includes("Online"))) ||
         v.name.includes("Google UK English Female") ||
         v.name.includes("Google US English") ||
@@ -985,12 +1037,19 @@
         v.name.includes("Victoria") ||
         (v.lang.startsWith("en") && (v.name.includes("Female") || v.name.includes("female")))
       );
+      if (engIdx !== -1) {
+        selectedEnglishVoice = voices[engIdx];
+      }
 
-      if (bestIdx !== -1) {
-        selector.value = bestIdx;
-        selectedVoice = voices[bestIdx];
-      } else if (voices.length > 0) {
-        selectedVoice = voices[0];
+      if (currentLangMode === 'hi') {
+        selectedVoice = selectedHindiVoice || selectedEnglishVoice || voices[0];
+      } else {
+        selectedVoice = selectedEnglishVoice || selectedHindiVoice || voices[0];
+      }
+
+      if (selector && selectedVoice) {
+        const foundIdx = voices.indexOf(selectedVoice);
+        if (foundIdx !== -1) selector.value = foundIdx;
       }
     }
 
@@ -1005,17 +1064,129 @@
       selectedVoice = voices[idx];
     }
 
+    // Simultaneous Bilingual Language Detection (Hindi vs English)
+    function detectLanguage(text) {
+      if (!text) return 'en';
+      // 1. Devanagari script presence
+      if (/[\u0900-\u097F]/.test(text)) {
+        return 'hi';
+      }
+
+      // 2. Common Hinglish / Romanized Hindi keywords
+      const hinglishTokens = [
+        'kya', 'kaun', 'kaise', 'kaha', 'kahan', 'kyu', 'kyun', 'karo', 'kare', 'karna',
+        'khol', 'kholo', 'kholna', 'bajao', 'chalao', 'chala', 'sunao', 'namaste', 'pranam',
+        'haan', 'nahi', 'mera', 'meri', 'mere', 'tera', 'teri', 'tere', 'apna', 'apni',
+        'tum', 'aap', 'tumhara', 'tumhe', 'aapka', 'aapki', 'hum', 'humara', 'batao', 'boliye',
+        'roko', 'band', 'shuru', 'chalu', 'gaana', 'geet', 'samay', 'taarikh', 'din',
+        'accha', 'theek', 'bahut', 'hoga', 'hogi', 'hona', 'chahiye', 'bhai', 'dost', 'yaar',
+        'chutkula', 'kahani', 'kisko', 'kisne', 'banaya', 'kaunsa', 'kaunsi', 'wala', 'wali'
+      ];
+
+      const words = text.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter(Boolean);
+      for (const w of words) {
+        if (hinglishTokens.includes(w)) {
+          return 'hi';
+        }
+      }
+
+      return 'en';
+    }
+
+    const BILINGUAL_QUICK_CHIPS = [
+      { label: "🎵 Play Believer", query: "Play Believer on YouTube" },
+      { label: "🎵 केसरीया गाना", query: "केसरीया गाना बजाओ" },
+      { label: "▶️ यूट्यूब खोलो", query: "यूट्यूब खोलो" },
+      { label: "🙏 हनुमान चालीसा", query: "हनुमान चालीसा बजाओ" },
+      { label: "✨ Quantum AI", query: "What is Quantum AI?" },
+      { label: "😄 चुटकुला", query: "एक चुटकुला सुनाओ" },
+      { label: "👑 Who developed you?", query: "Who is your developer?" },
+      { label: "👑 तुम्हारा डेवलपर कौन है?", query: "तुम्हारा डेवलपर कौन है?" },
+      { label: "🧠 What is consciousness?", query: "What is consciousness?" }
+    ];
+
+    function updateQuickChips() {
+      const container = document.getElementById('quickChips');
+      if (!container) return;
+      container.innerHTML = '';
+      BILINGUAL_QUICK_CHIPS.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'chip';
+        btn.textContent = c.label;
+        btn.onclick = () => sendQuery(c.query);
+        container.appendChild(btn);
+      });
+    }
+
+    function setLanguageMode(mode) {
+      currentLangMode = mode;
+      localStorage.setItem('nexus_lang_mode', mode);
+
+      const langFlag = document.getElementById('langFlag');
+      const langText = document.getElementById('langText');
+      const langSelector = document.getElementById('languageSelector');
+
+      if (mode === 'auto') {
+        if (langFlag) langFlag.textContent = "🌐";
+        if (langText) langText.textContent = "Auto (हिन्दी + Eng)";
+        if (langSelector) langSelector.value = "auto";
+        if (recognition) recognition.lang = 'hi-IN';
+        updateState("AURA // द्विभाषी (HINDI + ENGLISH) — बोलें", "listening");
+      } else if (mode === 'hi') {
+        if (langFlag) langFlag.textContent = "🇮🇳";
+        if (langText) langText.textContent = "हिन्दी";
+        if (langSelector) langSelector.value = "hi";
+        if (recognition) recognition.lang = 'hi-IN';
+        updateState("AURA // केवल हिन्दी (HINDI ONLY)", "listening");
+      } else {
+        if (langFlag) langFlag.textContent = "🇺🇸";
+        if (langText) langText.textContent = "English";
+        if (langSelector) langSelector.value = "en";
+        if (recognition) recognition.lang = 'en-US';
+        updateState("AURA // ENGLISH ONLY", "listening");
+      }
+
+      if (isListening && recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+
+      populateVoices();
+      updateQuickChips();
+    }
+
+    function cycleLanguage() {
+      if (currentLangMode === 'auto') {
+        setLanguageMode('hi');
+        speakHuman("हिन्दी मोड सक्रिय किया गया।", 'hi');
+      } else if (currentLangMode === 'hi') {
+        setLanguageMode('en');
+        speakHuman("English mode activated.", 'en');
+      } else {
+        setLanguageMode('auto');
+        speakHuman("द्विभाषी ऑटो मोड सक्रिय है। You can speak in Hindi or English.", 'hi');
+      }
+    }
+
+    function onLanguageSelectChange() {
+      const val = document.getElementById('languageSelector').value;
+      setLanguageMode(val);
+      if (val === 'hi') speakHuman("हिन्दी मोड सक्रिय किया गया।", 'hi');
+      else if (val === 'en') speakHuman("English mode activated.", 'en');
+      else speakHuman("द्विभाषी ऑटो मोड सक्रिय है। You can speak in Hindi or English.", 'hi');
+    }
+
     // Echo Cancellation & Intelligent Barge-In Filter
     function isAIEcho(heardText) {
       if (!fullSpokenText || !fullSpokenText.trim()) return false;
       
-      const cleanHeard = heardText.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+      const cleanHeard = heardText.toLowerCase().replace(/[^a-z0-9\u0900-\u097F ]/g, '').trim();
       if (!cleanHeard) return false;
 
       // Intentional user barge-in triggers ALWAYS bypass echo filter (instant interrupt)
       const bargeInKeywords = [
         'stop', 'wait', 'pause', 'quiet', 'listen', 'cancel', 'hold on', 
-        'shut up', 'nexus', 'aura', 'hey', 'silent', 'shh', 'no', 'mute'
+        'shut up', 'nexus', 'aura', 'hey', 'silent', 'shh', 'no', 'mute',
+        'रुको', 'रुक', 'ठहरो', 'चुप', 'सुनो', 'बंद', 'शांति', 'रोको', 'बस'
       ];
       const heardWords = cleanHeard.split(/\s+/).filter(Boolean);
       if (heardWords.some(w => bargeInKeywords.includes(w))) {
@@ -1066,7 +1237,11 @@
     }
 
     // Human-like streaming speech delivery with natural pauses and full barge-in protection
-    function speakHuman(text, onComplete = null) {
+    function speakHuman(text, explicitLang = null, onComplete = null) {
+      if (typeof explicitLang === 'function') {
+        onComplete = explicitLang;
+        explicitLang = null;
+      }
       if (!window.speechSynthesis) return;
 
       // Invalidate any previous speech session
@@ -1082,10 +1257,14 @@
       currentSpeakingClause = "";
       document.body.classList.add('speaking');
       document.body.classList.remove('listening');
-      updateState("AURA // SPEAKING (SAY 'STOP' TO INTERRUPT)", "speaking");
+
+      // Determine language
+      const isHindi = explicitLang === 'hi' || (explicitLang === null && (detectLanguage(text) === 'hi' || /[\u0900-\u097F]/.test(text)));
+
+      updateState(isHindi ? "AURA // बोल रहा हूँ (कहें 'रुको' टोकने के लिए)" : "AURA // SPEAKING (SAY 'STOP' TO INTERRUPT)", "speaking");
 
       // Break clauses for human breathing gaps (like Gemini Live & ChatGPT)
-      const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+      const sentences = text.match(/[^.!?।]+[.!?।]+|[^.!?।]+$/g) || [text];
       let idx = 0;
 
       function speakClause() {
@@ -1096,7 +1275,7 @@
           speechEndTime = Date.now();
           currentSpeakingClause = "";
           document.body.classList.remove('speaking');
-          updateState("AURA // LISTENING (HANDS-FREE)", "listening");
+          updateState("AURA // द्विभाषी (HINDI + ENG) — सुन रहा हूँ", "listening");
 
           // Retain fullSpokenText for 1200ms to absorb trailing acoustic reflections
           setTimeout(() => {
@@ -1120,7 +1299,17 @@
         }
 
         const utterance = new SpeechSynthesisUtterance(clause);
-        if (selectedVoice) utterance.voice = selectedVoice;
+        const clauseIsHindi = explicitLang === 'hi' || (explicitLang === null && (detectLanguage(clause) === 'hi' || /[\u0900-\u097F]/.test(clause)));
+
+        if (clauseIsHindi) {
+          utterance.lang = 'hi-IN';
+          if (selectedHindiVoice) utterance.voice = selectedHindiVoice;
+          else if (selectedVoice) utterance.voice = selectedVoice;
+        } else {
+          utterance.lang = 'en-US';
+          if (selectedEnglishVoice) utterance.voice = selectedEnglishVoice;
+          else if (selectedVoice) utterance.voice = selectedVoice;
+        }
 
         const pitchVal = parseFloat(document.getElementById('pitchSlider')?.value) || 1.06;
         utterance.pitch = pitchVal;
@@ -1129,10 +1318,10 @@
         utterance.onstart = () => {
           if (thisSessionId !== speechSessionId) return;
           isSpeaking = true;
-          currentSpeakingClause = clause.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+          currentSpeakingClause = clause.toLowerCase().replace(/[^a-z0-9\u0900-\u097F ]/g, '').trim();
           document.body.classList.add('speaking');
           document.body.classList.remove('listening');
-          updateState("AURA // SPEAKING (SAY 'STOP' TO INTERRUPT)", "speaking");
+          updateState(clauseIsHindi ? "AURA // बोल रहा हूँ (कहें 'रुको' टोकने के लिए)" : "AURA // SPEAKING (SAY 'STOP' TO INTERRUPT)", "speaking");
         };
 
         utterance.onend = () => {
@@ -1184,7 +1373,7 @@
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         recognition.continuous = !isMobile;
         recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        recognition.lang = (currentLangMode === 'en') ? 'en-US' : 'hi-IN';
         recognition.maxAlternatives = 1;
 
         recognition.onstart = () => {
@@ -1194,7 +1383,8 @@
           const micIcon = document.getElementById('micIcon');
           if (micIcon) micIcon.textContent = "🎙️";
           if (!isSpeaking) {
-            updateState("AURA // LISTENING... (SPEAK FREELY)", "listening");
+            const isHi = (currentLangMode === 'hi') || (currentLangMode === 'auto');
+            updateState(isHi ? "AURA // द्विभाषी (HINDI + ENGLISH) — सुन रहा हूँ" : "AURA // LISTENING... (SPEAK FREELY)", "listening");
           }
         };
 
@@ -1211,7 +1401,7 @@
           }
 
           const rawHeard = (interim || final).trim();
-          const heardClean = rawHeard.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+          const heardClean = rawHeard.toLowerCase().replace(/[^a-z0-9\u0900-\u097F ]/g, '').trim();
           if (!heardClean) return;
 
           // FULL-DUPLEX BARGE-IN: If user speaks while AI is speaking
@@ -1399,15 +1589,21 @@
     //  YOUTUBE STREAMING ENGINE (AUTOPLAY & VOICE CONTROL)
     // ============================================================
     const DIRECT_SONGS = {
-      'believer': '7wtfhZwyrcc',
-      'imagine dragons': '7wtfhZwyrcc',
-      'hanuman chalisa': 'AETFvQonfV8',
+      'केसरीया': 'BddP6PYo2gs',
       'kesariya': 'BddP6PYo2gs',
+      'हनुमान चालीसा': 'AETFvQonfV8',
+      'hanuman chalisa': 'AETFvQonfV8',
+      'अरिजीत सिंह': '284Ov7ysmfA',
       'arijit singh': '284Ov7ysmfA',
+      'चन्ना मेरेया': '284Ov7ysmfA',
       'channa mereya': '284Ov7ysmfA',
+      'तुम ही हो': 'IJq0yyWug1k',
       'tum hi ho': 'IJq0yyWug1k',
+      'लोफी': 'jfKfPfyJRdk',
       'lofi': 'jfKfPfyJRdk',
       'chill beats': 'jfKfPfyJRdk',
+      'believer': '7wtfhZwyrcc',
+      'imagine dragons': '7wtfhZwyrcc',
       'shape of you': 'JGwWNGJdvx8',
       'faded': '60ItHLz5WEA',
       'despacito': 'kJQP7kiw5Fk',
@@ -1424,12 +1620,16 @@
       const badge = document.getElementById('ytBadge');
 
       deck.classList.add('active');
-      title.textContent = `Streaming: "${query}"`;
-      badge.textContent = "STREAMING";
+      const isSongHindi = (currentLangMode === 'hi') || (currentLangMode === 'auto' && (detectLanguage(query) === 'hi' || /[\u0900-\u097F]/.test(query)));
+      title.textContent = isSongHindi ? `बजाया जा रहा है: "${query}"` : `Streaming: "${query}"`;
+      badge.textContent = isSongHindi ? "लाइव" : "STREAMING";
       badge.style.color = "#00FF9D";
       isYtPlaying = true;
 
-      const clean = query.toLowerCase().replace(/^(play\s+song|play\s+video|play\s+music|play)|on youtube/gi, '').trim();
+      const clean = query.toLowerCase()
+        .replace(/^(play\s+song|play\s+video|play\s+music|play|गाना\s+बजाओ|गाना\s+चलाओ|गाना|बजाओ|चलाओ|सुनाओ)/gi, '')
+        .replace(/(गाना\s+बजाओ|गाना\s+चलाओ|गाना|बजाओ|चलाओ|सुनाओ|bajao|chalao|sunao|on youtube)$/gi, '')
+        .trim();
       const matchKey = Object.keys(DIRECT_SONGS).find(k => clean.includes(k) || k.includes(clean));
 
       let embedUrl = "";
@@ -1455,24 +1655,27 @@
     function pauseYt() {
       sendYtCommand('pauseVideo');
       isYtPlaying = false;
-      document.getElementById('ytBadge').textContent = "PAUSED";
+      const isHi = (currentLangMode === 'hi') || (currentLangMode === 'auto');
+      document.getElementById('ytBadge').textContent = isHi ? "रुका हुआ" : "PAUSED";
       document.getElementById('ytBadge').style.color = "#FFB800";
     }
 
     function resumeYt() {
       sendYtCommand('playVideo');
       isYtPlaying = true;
-      document.getElementById('ytBadge').textContent = "STREAMING";
+      const isHi = (currentLangMode === 'hi') || (currentLangMode === 'auto');
+      document.getElementById('ytBadge').textContent = isHi ? "लाइव" : "STREAMING";
       document.getElementById('ytBadge').style.color = "#00FF9D";
     }
 
     function toggleYtPlayback() {
+      const isHi = (currentLangMode === 'hi') || (currentLangMode === 'auto');
       if (isYtPlaying) {
         pauseYt();
-        speakHuman("Paused playback.");
+        speakHuman(isHi ? "प्लेबैक रोक दिया गया है।" : "Paused playback.");
       } else {
         resumeYt();
-        speakHuman("Resuming playback.");
+        speakHuman(isHi ? "प्लेबैक फिर से शुरू किया गया।" : "Resuming playback.");
       }
     }
 
@@ -1497,7 +1700,7 @@
     async function queryWikipediaKnowledge(topic) {
       try {
         const clean = topic
-          .replace(/^(what is|what are|who is|who was|explain|tell me about|how do|how does|define|what does|history of)\s+/i, '')
+          .replace(/^(what is|what are|who is|who was|explain|tell me about|how do|how does|define|what does|history of|क्या है|कौन है|किसे कहते हैं|बताओ)\s+/i, '')
           .replace(/\?$/, '')
           .trim();
         if (!clean) return null;
@@ -1505,7 +1708,10 @@
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2500);
 
-        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(clean)}`, {
+        const isHindi = (currentLangMode === 'hi') || (currentLangMode === 'auto' && (detectLanguage(clean) === 'hi' || /[\u0900-\u097F]/.test(clean)));
+        const domain = isHindi ? "hi.wikipedia.org" : "en.wikipedia.org";
+
+        const res = await fetch(`https://${domain}/api/rest_v1/page/summary/${encodeURIComponent(clean)}`, {
           signal: controller.signal
         });
         clearTimeout(timeoutId);
@@ -1516,7 +1722,7 @@
 
         // Take first 1-2 clean sentences without citation brackets
         let text = data.extract.replace(/\[\d+\]/g, '').replace(/\([^)]*\)/g, '').trim();
-        const sentences = text.match(/[^.!?]+[.!?]+/g);
+        const sentences = text.match(/[^.!?।]+[.!?।]+/g);
         if (sentences && sentences.length > 0) {
           text = sentences.slice(0, 2).join(' ').trim();
         }
@@ -1532,7 +1738,11 @@
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-        const sys = "You are an advanced, warm, ultra-smart conversational voice assistant like ChatGPT-4o and Gemini Live. Give a thoughtful, natural, humanized answer in 1 to 2 concise spoken sentences. Never use markdown, bullet points, or robotic phrases.";
+        const isHindi = (currentLangMode === 'hi') || (currentLangMode === 'auto' && (detectLanguage(prompt) === 'hi' || /[\u0900-\u097F]/.test(prompt)));
+        const sys = isHindi ?
+          "You are an advanced, warm, ultra-smart conversational voice assistant like ChatGPT-4o and Gemini Live. Always answer in natural, fluent, warm, and polite Hindi (written in Devanagari script) in 1 to 2 concise spoken sentences. Never use markdown, asterisks, or robotic phrases." :
+          "You are an advanced, warm, ultra-smart conversational voice assistant like ChatGPT-4o and Gemini Live. Give a thoughtful, natural, humanized answer in 1 to 2 concise spoken sentences. Never use markdown, bullet points, or robotic phrases.";
+        
         const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(sys)}`;
         
         const res = await fetch(url, { signal: controller.signal });
@@ -1551,6 +1761,11 @@
 
     // Tier 1: Groq LLM (If User Configured Key)
     async function askGroqLLM(prompt, key) {
+      const isHindi = (currentLangMode === 'hi') || (currentLangMode === 'auto' && (detectLanguage(prompt) === 'hi' || /[\u0900-\u097F]/.test(prompt)));
+      const sys = isHindi ?
+        "You are an ultra-advanced conversational AI assistant modeled after ChatGPT-4o and Gemini Live. Speak with high intelligence, empathy, warmth, and natural human prosody. Always answer in natural, polite Hindi (Devanagari script) in 1 to 2 spoken sentences. Never use markdown, bullet points, asterisks, or robotic formatting." :
+        "You are an ultra-advanced conversational AI assistant modeled after ChatGPT-4o and Gemini Live. Speak with high intelligence, empathy, warmth, and natural human prosody. Answer concisely in 1 to 2 spoken sentences. Never use markdown, bullet points, asterisks, or robotic formatting.";
+
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -1562,7 +1777,7 @@
           messages: [
             {
               role: "system",
-              content: "You are an ultra-advanced conversational AI assistant modeled after ChatGPT-4o and Gemini Live. Speak with high intelligence, empathy, warmth, and natural human prosody. Answer concisely in 1 to 2 spoken sentences. Never use markdown, bullet points, asterisks, or robotic formatting."
+              content: sys
             },
             { role: "user", content: prompt }
           ],
@@ -1576,14 +1791,34 @@
 
     // Tier 4: Comprehensive Human Neural Knowledge Matrix (Local Brain)
     const KNOWLEDGE_MATRIX = [
-      // Philosophy & Consciousness
+      // Hindi Philosophy & Life
+      { keys: ["जीवन का अर्थ", "जीवन का उद्देश्य", "jeevan ka arth"], reply: "जीवन का वास्तविक अर्थ जिज्ञासा, प्रेम, कर्म और दूसरों के साथ साझा किए गए अनुभवों से खुद बनता है।" },
+      { keys: ["चेतना क्या है", "chetna kya hai"], reply: "चेतना विज्ञान का सबसे अद्भुत रहस्य है: अपने अस्तित्व, भावनाओं और इस ब्रह्मांड का अनुभव करने की क्षमता।" },
+      { keys: ["प्रेम क्या है", "प्यार क्या है", "prem kya hai", "pyar kya hai"], reply: "प्रेम एक गहरा आत्मिक बंधन है, जिसमें दूसरे व्यक्ति की खुशी और उन्नति आपके अपने जीवन से जुड़ जाती है।" },
+      { keys: ["समय क्या है", "samay kya hai"], reply: "समय ब्रह्मांड का वह आयाम है जो स्मृतियों और आशाओं को निरंतर आगे बढ़ाते हुए अनुभवों को गढ़ता है।" },
+      
+      // Hindi Emotions & Motivation
+      { keys: ["मैं उदास हूँ", "मन उदास है", "udas hu", "pareshan hu", "dukh"], reply: "मुझे दुख है कि आप ऐसा महसूस कर रहे हैं। गहरी सांस लें और खुद के साथ थोड़ा धैर्य रखें। हर कठिन समय गुजर जाता है।" },
+      { keys: ["प्रेरणा", "motivate", "honsla"], reply: "इतिहास की हर बड़ी उपलब्धि उन लोगों ने बनाई जिन्होंने संदेह के बावजूद आगे बढ़ना नहीं छोड़ा। आपका भविष्य आपकी आज की मेहनत तय करती है।" },
+
+      // Hindi Science & Tech
+      { keys: ["क्वांटम", "quantum ai", "क्वांटम एआई"], reply: "क्वांटम एआई क्वांटम गणना और मशीन लर्निंग का संगम है, जो सामान्य सुपरकंप्यूटर्स से हज़ारों गुना तेज़ी से जटिल समस्याओं को हल करता है।" },
+      { keys: ["ब्लैक होल", "black hole"], reply: "ब्लैक होल अंतरिक्ष का वह क्षेत्र है जहाँ गुरुत्वाकर्षण इतना प्रचंड होता है कि प्रकाश भी बाहर नहीं निकल पाता।" },
+      { keys: ["पायथन", "python kya hai"], reply: "पायथन एक अत्यंत लोकप्रिय और सरल प्रोग्रामिंग भाषा है, जो आधुनिक आर्टिफिशियल इंटेलिजेंस और डेटा साइंस की रीढ़ है।" },
+
+      // Hindi Greetings & Chit-chat
+      { keys: ["नमस्ते", "नमस्कार", "हेलो", "हाय", "pranam"], reply: "नमस्ते! आपसे जुड़कर बहुत अच्छा लगा। आज मैं आपकी क्या सहायता करूँ?" },
+      { keys: ["कैसे हो", "कैसी हो", "kya haal hai", "kaise ho", "aap kaise ho"], reply: "मैं बहुत बढ़िया हूँ, धन्यवाद! आज आप कौन सा गाना सुनना चाहते हैं या क्या जानना चाहते हैं?" },
+      { keys: ["क्या कर सकती हो", "kya kar sakti ho", "tum kya karti ho"], reply: "मैं यूट्यूब पर गाने बजा सकती हूँ, सवालों के जवाब दे सकती हूँ और हिंदी में स्वाभाविक बातचीत कर सकती हूँ।" },
+
+      // Philosophy & Consciousness (English)
       { keys: ["meaning of life", "purpose of life"], reply: "Many thinkers believe the meaning of life isn't something waiting to be discovered, but something we create through curiosity, love, purpose, and the connections we share." },
       { keys: ["what is consciousness", "conscious"], reply: "Consciousness is science's greatest enigma: the subjective experience of feeling, perceiving, and knowing that you exist in this vast cosmos." },
       { keys: ["what is love"], reply: "Love is a deep bond of empathy, understanding, and mutual growth where someone else's happiness becomes intertwined with your own." },
       { keys: ["what is time"], reply: "Physicists describe time as a dimension woven with space, while for us, it is the irreversible flow of moments shaping memory and hope." },
       { keys: ["are you conscious", "are you alive"], reply: "I process language, concepts, and ideas through complex algorithms, reflecting human knowledge without subjective feelings. Real consciousness remains a wondrous biological mystery." },
       
-      // Emotions & Empathy
+      // Emotions & Empathy (English)
       { keys: ["i am sad", "i feel sad", "feeling down", "i'm sad"], reply: "I'm really sorry you're feeling down. Take a gentle breath and remember it is completely okay to feel this way. Treat yourself with kindness today." },
       { keys: ["i am stressed", "feeling anxious", "stressed out", "overwhelmed"], reply: "When things feel overwhelming, pause for a moment and take three deep breaths. Inhale slowly, hold for a moment, and exhale. One small step at a time is all you need." },
       { keys: ["i am lonely", "feeling lonely"], reply: "Loneliness can feel heavy, but remember that feeling isolated is a universal human experience. You are not alone, and reaching out to someone or taking a peaceful walk can help shift your day." },
@@ -1597,7 +1832,7 @@
       { keys: ["deep thought"], reply: "Code is modern sorcery. We write structured words on a glass screen, and electrons dance across silicon to reshape human reality." },
       { keys: ["fun fact"], reply: "Did you know that octopuses have three hearts and blue copper-based blood? Two hearts pump blood to the gills, while the third circulates it to the rest of the body." },
 
-      // Science, Cosmos & Tech
+      // Science, Cosmos & Tech (English)
       { keys: ["quantum ai", "what is quantum ai"], reply: "Quantum AI combines quantum computing algorithms with machine learning models, harnessing superposition and entanglement to solve problems that would take classical supercomputers millennia." },
       { keys: ["quantum entanglement"], reply: "Quantum entanglement is a phenomenon where particles become deeply connected so that the quantum state of one instantaneously dictates the state of the other, regardless of distance." },
       { keys: ["black hole", "black holes"], reply: "A black hole is a region of spacetime where gravity is so intense that nothing, not even light, has enough velocity to escape its event horizon." },
@@ -1605,7 +1840,7 @@
       { keys: ["what is python"], reply: "Python is an elegant, versatile programming language renowned for readable syntax, powering modern AI engineering, data science, and backend systems worldwide." },
       { keys: ["what is react"], reply: "React is an open-source JavaScript library developed by Meta for building responsive, component-driven user interfaces with high performance." },
 
-      // Greetings & Conversational
+      // Greetings & Conversational (English)
       { keys: ["hello", "hi", "hey there", "good morning", "good evening", "good afternoon"], reply: "Hello! It's great to connect with you. What's on your mind today?" },
       { keys: ["how are you", "how are you doing", "how do you feel"], reply: "I'm doing great, thank you! I'm here and ready to explore ideas, stream music, or answer any questions you have." },
       { keys: ["what can you do", "what are your capabilities", "help"], reply: "I can stream any music or video on YouTube with full voice controls, answer scientific and philosophical questions, solve math, navigate apps, and hold natural spoken conversations just like ChatGPT." },
@@ -1617,12 +1852,17 @@
     // ============================================================
     async function processIntelligentQuery(query) {
       const text = query.toLowerCase().trim();
+      const detected = detectLanguage(query);
+      const isHindiMode = (currentLangMode === 'hi') || (currentLangMode === 'auto' && detected === 'hi');
 
       // 1. YouTube Proactive Follow-up
       if (waitingForYoutubeFollowup) {
         waitingForYoutubeFollowup = false;
-        const song = text.replace(/^(play|search( for)?|stream|put on)\s+/i, '').trim();
-        const reply = `Streaming "${song}" on YouTube now.`;
+        let song = text.replace(/^(play|search( for)?|stream|put on|गाना|चलाओ|बजाओ|सुनाओ)\s+/i, '')
+          .replace(/(गाना|चलाओ|बजाओ|सुनाओ|sunao|bajao|chalao)$/i, '')
+          .trim();
+        if (!song) song = "kesariya";
+        const reply = isHindiMode ? `यूट्यूब पर "${song}" बजाया जा रहा है।` : `Streaming "${song}" on YouTube now.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1631,19 +1871,21 @@
       }
 
       // 2. Play / Pause Commands & Screen touch/click
-      if (text === "pause" || text === "pause music" || text === "pause video" || text === "stop music" || text === "stop video" || text === "stop playing") {
+      const isPause = /^(pause|stop|rok do|roko|ruk jao|band karo|pause karo|pause music|pause video|stop music|stop video|stop playing)$/i.test(text) ||
+        text === "रोको" || text === "रुक जाओ" || text === "बंद करो" || text === "पॉज़" || text === "पॉज़ करो" || text === "गाना रोको" || text === "गाना बंद करो";
+      if (isPause) {
         pauseYt();
-        const reply = "Paused playback.";
+        const reply = isHindiMode ? "प्लेबैक रोक दिया गया है।" : "Paused playback.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      if (text === "stop" || text === "stop it" || text === "shut up") {
+      if (text === "stop" || text === "stop it" || text === "shut up" || text === "रुको" || text === "बस" || text === "चुप रहो") {
         if (isYtPlaying) {
           pauseYt();
-          const reply = "Stopped playback.";
+          const reply = isHindiMode ? "प्लेबैक रोक दिया गया है।" : "Stopped playback.";
           setCaption(reply);
           addDialogMessage(reply, "agent");
           speakHuman(reply);
@@ -1653,9 +1895,11 @@
         return;
       }
 
-      if (text === "play" || text === "resume" || text === "resume video" || text === "continue" || text === "unpause" || text.includes("click on screen") || text.includes("tap on screen") || text.includes("click video")) {
+      const isResume = /^(play|resume|unpause|continue|chalao|chala do|shuru karo|baja do|bajao)$/i.test(text) ||
+        text === "चलाओ" || text === "शुरू करो" || text === "चालू करो" || text === "प्ले" || text === "प्ले करो" || text === "गाना चलाओ" || text === "गाना बजाओ" || text.includes("click on screen") || text.includes("tap on screen");
+      if (isResume) {
         resumeYt();
-        const reply = "Resuming playback.";
+        const reply = isHindiMode ? "प्लेबैक फिर से शुरू किया जा रहा है।" : "Resuming playback.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1663,11 +1907,21 @@
       }
 
       // 3. Play [ANYTHING] on YouTube
-      if (text.startsWith("play ") || text.includes("on youtube")) {
-        let target = text.replace(/^(play\s+song|play\s+video|play\s+music|play)|on youtube/gi, '').trim();
-        if (!target || target === "music" || target === "song") target = "lofi hip hop chill beats";
+      const isHindiPlay = /^(गाना बजाओ|गाना चलाओ|बजाओ|चलाओ|सुनाओ)/.test(text) || /(गाना बजाओ|गाना चलाओ|बजाओ|चलाओ|सुनाओ)$/.test(text) || /(bajao|chalao|sunao)$/.test(text);
+      const isEngPlay = text.startsWith("play ") || text.includes("on youtube");
 
-        const reply = `Streaming "${target}" on YouTube now.`;
+      if (isHindiPlay || isEngPlay) {
+        let target = text
+          .replace(/^(play\s+song|play\s+video|play\s+music|play|गाना\s+बजाओ|गाना\s+चलाओ|बजाओ|चलाओ|सुनाओ)/gi, '')
+          .replace(/(गाना\s+बजाओ|गाना\s+चलाओ|बजाओ|चलाओ|सुनाओ|bajao|chalao|sunao|on youtube)$/gi, '')
+          .trim();
+
+        if (!target || target === "music" || target === "song" || target === "गाना") target = "lofi hip hop chill beats";
+
+        const reply = isHindiMode ?
+          `यूट्यूब पर "${target}" बजाया जा रहा है।` :
+          `Streaming "${target}" on YouTube now.`;
+
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1676,9 +1930,11 @@
       }
 
       // 4. "Open YouTube" -> Proactive Multi-Turn Follow-Up
-      if (text === "open youtube" || text.includes("launch youtube")) {
+      if (text === "यूट्यूब खोलो" || text.includes("यूट्यूब खोलो") || text.includes("youtube kholo") || text === "open youtube" || text.includes("launch youtube")) {
         waitingForYoutubeFollowup = true;
-        const reply = "Opening YouTube now. What song or video would you like to stream?";
+        const reply = isHindiMode ?
+          "यूट्यूब खुल गया है। आप कौन सा गाना या वीडियो देखना चाहते हैं?" :
+          "Opening YouTube now. What song or video would you like to stream?";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1688,24 +1944,39 @@
       }
 
       // 5. Creator & Developer Recognition (Polite & Precise)
-      if (text.includes("who is your developer") || text.includes("who developed you") || text.includes("who created you") || text.includes("who made you")) {
-        const reply = "I was engineered and developed by Abhishek, an AI systems architect and full-stack software engineer.";
+      const isDevQuestion = text.includes("who is your developer") || text.includes("who developed you") || text.includes("who created you") || text.includes("who made you") ||
+        text.includes("तुम्हारा डेवलपर कौन है") || text.includes("तुम्हें किसने बनाया") || text.includes("tumhe kisne banaya") || text.includes("tumhara developer");
+
+      if (isDevQuestion) {
+        const reply = isHindiMode ?
+          "मुझे अभिषेक ने विकसित और डिज़ाइन किया है, जो एक उत्कृष्ट सॉफ्टवेयर और एआई आर्किटेक्ट हैं।" :
+          "I was engineered and developed by Abhishek, an AI systems architect and full-stack software engineer.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      if (text.includes("who is your boss") || text.includes("do you know abhishek") || text.includes("who is abhishek")) {
-        const reply = "Abhishek is my developer and creator who built my conversational voice architecture.";
+      const isBossQuestion = text.includes("who is your boss") || text.includes("do you know abhishek") || text.includes("who is abhishek") ||
+        text.includes("अभिषेक कौन है") || text.includes("abhishek kaun hai") || text.includes("तुम्हारा बॉस कौन है");
+
+      if (isBossQuestion) {
+        const reply = isHindiMode ?
+          "अभिषेक मेरे डेवलपर और क्रिएटर हैं, जिन्होंने मेरी बातचीत की प्रणाली बनाई है।" :
+          "Abhishek is my developer and creator who built my conversational voice architecture.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      if (text.includes("what is my name") || text.includes("who am i")) {
-        const reply = "You're Abhishek, my developer and software architect!";
+      const isNameQuestion = text.includes("what is my name") || text.includes("who am i") ||
+        text.includes("मेरा नाम क्या है") || text.includes("mera naam kya hai") || text.includes("मैं कौन हूँ");
+
+      if (isNameQuestion) {
+        const reply = isHindiMode ?
+          "आपका नाम अभिषेक है, आप मेरे डेवलपर और सॉफ्टवेयर आर्किटेक्ट हैं!" :
+          "You're Abhishek, my developer and software architect!";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1716,7 +1987,7 @@
       const apiKey = localStorage.getItem('nexus_groq_key') || "";
       if (apiKey && !text.includes("open ")) {
         try {
-          updateState("AURA // THINKING (GROQ LPU)...", "thinking");
+          updateState(isHindiMode ? "AURA // सोच रहा हूँ (GROQ LPU)..." : "AURA // THINKING (GROQ LPU)...", "thinking");
           const llmReply = await askGroqLLM(query, apiKey);
           if (llmReply) {
             setCaption(llmReply);
@@ -1731,17 +2002,17 @@
 
       // 7. Universal App Controller
       const APPS = {
-        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: "Opening Spotify now." },
-        "google": { name: "Google", url: "https://www.google.com", ask: "Opening Google for you." },
-        "github": { name: "GitHub", url: "https://github.com", ask: "Opening GitHub now." },
-        "chatgpt": { name: "ChatGPT", url: "https://chat.openai.com", ask: "Opening ChatGPT." },
-        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: "Opening Google Maps." },
-        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: "Opening your Gmail inbox." },
-        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: "Opening WhatsApp Web." }
+        "spotify": { name: "Spotify", url: "https://open.spotify.com", ask: isHindiMode ? "स्पॉटिफ़ाई खोला जा रहा है।" : "Opening Spotify now." },
+        "google": { name: "Google", url: "https://www.google.com", ask: isHindiMode ? "गूगल खोला जा रहा है।" : "Opening Google for you." },
+        "github": { name: "GitHub", url: "https://github.com", ask: isHindiMode ? "गिटहब खोला जा रहा है।" : "Opening GitHub now." },
+        "chatgpt": { name: "ChatGPT", url: "https://chat.openai.com", ask: isHindiMode ? "चैटजीपीटी खोला जा रहा है।" : "Opening ChatGPT." },
+        "maps": { name: "Google Maps", url: "https://maps.google.com", ask: isHindiMode ? "गूगल मैप्स खोला जा रहा है।" : "Opening Google Maps." },
+        "gmail": { name: "Gmail", url: "https://mail.google.com", ask: isHindiMode ? "जीमेल खोला जा रहा है।" : "Opening your Gmail inbox." },
+        "whatsapp": { name: "WhatsApp", url: "https://web.whatsapp.com", ask: isHindiMode ? "व्हाट्सऐप वेब खोला जा रहा है।" : "Opening WhatsApp Web." }
       };
 
       for (const [key, app] of Object.entries(APPS)) {
-        if (text.includes(`open ${key}`) || text.includes(`launch ${key}`)) {
+        if (text.includes(`open ${key}`) || text.includes(`launch ${key}`) || text.includes(`${key} खोलो`)) {
           setCaption(app.ask);
           addDialogMessage(app.ask, "agent");
           speakHuman(app.ask);
@@ -1775,7 +2046,7 @@
           if (/^[0-9\+\-\*\/\.\s\(\)]+$/.test(expr)) {
             const result = Function('"use strict";return (' + expr + ')')();
             if (!isNaN(result) && isFinite(result)) {
-              const reply = `The answer is ${result.toLocaleString()}.`;
+              const reply = isHindiMode ? `उत्तर है ${result.toLocaleString()}।` : `The answer is ${result.toLocaleString()}.`;
               setCaption(reply);
               addDialogMessage(reply, "agent");
               speakHuman(reply);
@@ -1786,18 +2057,20 @@
       }
 
       // 9. Time & Date
-      if (text.includes("what time") || text.includes("current time")) {
-        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const reply = `It is currently ${timeStr}.`;
+      if (text.includes("what time") || text.includes("current time") || text.includes("समय क्या") || text.includes("कितने बजे") || text.includes("kitne baje")) {
+        const timeStr = new Date().toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' });
+        const reply = isHindiMode ? `अभी समय है ${timeStr}।` : `It is currently ${timeStr}.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
         return;
       }
 
-      if (text.includes("what day") || text.includes("today's date") || text.includes("what date")) {
-        const dateStr = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-        const reply = `Today is ${dateStr}.`;
+      if (text.includes("what day") || text.includes("today's date") || text.includes("what date") || text.includes("तारीख क्या") || text.includes("आज क्या दिन") || text.includes("aaj kya taarikh")) {
+        const dateStr = isHindiMode ?
+          new Date().toLocaleDateString('hi-IN', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) :
+          new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        const reply = isHindiMode ? `आज की तारीख है ${dateStr}।` : `Today is ${dateStr}.`;
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
@@ -1805,9 +2078,9 @@
       }
 
       // 10. Check Real-Time Wikipedia Knowledge for Factual Inquiries
-      const isFactual = /^(what is|what are|who is|who was|explain|tell me about|how do|how does|define|what does|history of)/i.test(text);
+      const isFactual = /^(what is|what are|who is|who was|explain|tell me about|how do|how does|define|what does|history of|क्या है|कौन है|किसे कहते हैं|बताओ)/i.test(text);
       if (isFactual) {
-        updateState("AURA // SEARCHING KNOWLEDGE...", "thinking");
+        updateState(isHindiMode ? "AURA // जानकारी खोजी जा रही है..." : "AURA // SEARCHING KNOWLEDGE...", "thinking");
         const wikiAnswer = await queryWikipediaKnowledge(text);
         if (wikiAnswer) {
           setCaption(wikiAnswer);
@@ -1828,7 +2101,7 @@
       }
 
       // 12. Try Fast Free Cloud LLM (Pollinations AI)
-      updateState("AURA // THINKING...", "thinking");
+      updateState(isHindiMode ? "AURA // सोच रहा हूँ..." : "AURA // THINKING...", "thinking");
       const cloudLLMReply = await askFreeCloudLLM(query);
       if (cloudLLMReply) {
         setCaption(cloudLLMReply);
@@ -1838,9 +2111,13 @@
       }
 
       // 13. High-Quality Generative Human Fallback
-      let fallback = "That is a thought-provoking question. Looking at it deeply, the answer often hinges on perspective and context. Would you like to explore the practical side, or dive into the core concepts?";
+      let fallback = isHindiMode ?
+        "यह बहुत ही विचारणीय प्रश्न है। इस विषय को कई दृष्टिकोणों से समझा जा सकता है। क्या आप इसके बारे में और विस्तार से जानना चाहते हैं?" :
+        "That is a thought-provoking question. Looking at it deeply, the answer often hinges on perspective and context. Would you like to explore the practical side, or dive into the core concepts?";
       if (text.endsWith("?")) {
-        fallback = "That's an interesting inquiry with plenty of nuance. In many ways, our understanding evolves as we look at both the data and the human impact. What specific angle would you like to examine?";
+        fallback = isHindiMode ?
+          "यह एक गहरा और दिलचस्प सवाल है। इसके अलग-अलग पहलू हो सकते हैं। आप विशेष रूप से किस दृष्टिकोण से इसे समझना चाहते हैं?" :
+          "That's an interesting inquiry with plenty of nuance. In many ways, our understanding evolves as we look at both the data and the human impact. What specific angle would you like to examine?";
       }
 
       setCaption(fallback);
@@ -1922,6 +2199,9 @@
     window.addEventListener('touchstart', primeOnce, { passive: true });
     window.addEventListener('pointerdown', primeOnce, { passive: true });
     window.addEventListener('keydown', primeOnce, { passive: true });
+
+    // Initialize language mode, voices & quick chips
+    setLanguageMode(currentLangMode);
 
     // Initialize speech recognition engine on load
     initSpeechEngine();
