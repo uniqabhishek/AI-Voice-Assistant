@@ -697,7 +697,7 @@
     </header>
 
     <!-- Center Stage -->
-    <main class="stage" onclick="handleStageClick()">
+    <main class="stage" onclick="handleStageClick(event)">
       
       <!-- Liquid Canvas Orb -->
       <canvas id="orb-canvas" width="640" height="640"></canvas>
@@ -705,7 +705,7 @@
       <!-- Dynamic State Pill -->
       <div class="state-pill" id="statePill">
         <span id="stateIcon">✨</span>
-        <span id="stateText">AURA // READY FOR COMMANDS</span>
+        <span id="stateText">AURA // TAP ANYWHERE TO START</span>
       </div>
 
       <!-- Floating Subtitles -->
@@ -715,7 +715,7 @@
 
       <!-- Interrupt Pill (Barge-In) -->
       <button class="interrupt-btn" id="interruptBtn" onclick="interruptAI()">
-        <span>✋ Tap or speak to interrupt</span>
+        <span>✋ Tap or say "stop" to interrupt</span>
       </button>
 
       <!-- Floating YouTube Streaming Deck -->
@@ -845,6 +845,14 @@
     let currentSpeakingClause = "";
     let recognition = null;
     let selectedVoice = null;
+    let fullSpokenText = "";
+    let speechStartTime = 0;
+    let speechEndTime = 0;
+    let speechSessionId = 0;
+    let isStartingRecognition = false;
+    let restartTimeoutId = null;
+    let hasPrimed = false;
+    let micPermRequested = false;
 
     // ============================================================
     //  CANVAS ORB ENGINE (LIQUID MORPHING VISUALIZER)
@@ -954,6 +962,7 @@
     function populateVoices() {
       if (!window.speechSynthesis) return;
       const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
       const selector = document.getElementById('voiceSelector');
       selector.innerHTML = '';
 
@@ -966,11 +975,15 @@
 
       // Find top Natural Female voice
       const bestIdx = voices.findIndex(v => 
-        (v.name.includes("Natural") && v.name.includes("Female")) ||
-        v.name.includes("Jenny") ||
-        v.name.includes("Aria") ||
+        (v.name.includes("Natural") && (v.name.includes("Female") || v.name.includes("Online"))) ||
+        v.name.includes("Google UK English Female") ||
+        v.name.includes("Google US English") ||
+        v.name.includes("Microsoft Jenny Online") ||
+        v.name.includes("Microsoft Aria Online") ||
+        v.name.includes("Microsoft Zira") ||
         v.name.includes("Samantha") ||
-        (v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Female") || v.name.includes("Zira")))
+        v.name.includes("Victoria") ||
+        (v.lang.startsWith("en") && (v.name.includes("Female") || v.name.includes("female")))
       );
 
       if (bestIdx !== -1) {
@@ -992,34 +1005,109 @@
       selectedVoice = voices[idx];
     }
 
-    // Instant Barge-In (Interruption)
-    function interruptAI() {
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+    // Echo Cancellation & Intelligent Barge-In Filter
+    function isAIEcho(heardText) {
+      if (!fullSpokenText || !fullSpokenText.trim()) return false;
+      
+      const cleanHeard = heardText.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+      if (!cleanHeard) return false;
+
+      // Intentional user barge-in triggers ALWAYS bypass echo filter (instant interrupt)
+      const bargeInKeywords = [
+        'stop', 'wait', 'pause', 'quiet', 'listen', 'cancel', 'hold on', 
+        'shut up', 'nexus', 'aura', 'hey', 'silent', 'shh', 'no', 'mute'
+      ];
+      const heardWords = cleanHeard.split(/\s+/).filter(Boolean);
+      if (heardWords.some(w => bargeInKeywords.includes(w))) {
+        return false; // Valid human interruption!
       }
-      isSpeaking = false;
-      currentSpeakingClause = "";
-      document.body.classList.remove('speaking');
-      updateState("AURA // INTERRUPTED — LISTENING...", "listening");
-      startRecognition();
+
+      const cleanSpoken = fullSpokenText.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+      const spokenWords = cleanSpoken.split(/\s+/).filter(Boolean);
+      if (spokenWords.length === 0) return false;
+
+      // 1. Direct substring match
+      if (cleanSpoken.includes(cleanHeard)) {
+        return true;
+      }
+
+      // 2. Token overlap: if 50% or more of heard words match words spoken by AI
+      const spokenSet = new Set(spokenWords);
+      let matchCount = 0;
+      for (const w of heardWords) {
+        if (spokenSet.has(w)) matchCount++;
+      }
+
+      if ((matchCount / heardWords.length) >= 0.5) {
+        return true;
+      }
+
+      return false;
     }
 
-    // Human-like streaming speech delivery with natural pauses
+    // Instant Barge-In (Interruption)
+    function interruptAI() {
+      speechSessionId++; // Invalidate active speech stream
+      try {
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      } catch(e){}
+
+      isSpeaking = false;
+      currentSpeakingClause = "";
+      fullSpokenText = "";
+      speechEndTime = Date.now();
+      document.body.classList.remove('speaking');
+      updateState("AURA // INTERRUPTED — LISTENING...", "listening");
+      if (handsFreeActive && !isMuted) {
+        startRecognition();
+      }
+    }
+
+    // Human-like streaming speech delivery with natural pauses and full barge-in protection
     function speakHuman(text, onComplete = null) {
       if (!window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
+
+      // Invalidate any previous speech session
+      speechSessionId++;
+      const thisSessionId = speechSessionId;
+      try {
+        window.speechSynthesis.cancel();
+      } catch(e){}
+
+      fullSpokenText = text;
+      speechStartTime = Date.now();
+      isSpeaking = true;
+      currentSpeakingClause = "";
+      document.body.classList.add('speaking');
+      document.body.classList.remove('listening');
+      updateState("AURA // SPEAKING (SAY 'STOP' TO INTERRUPT)", "speaking");
 
       // Break clauses for human breathing gaps (like Gemini Live & ChatGPT)
       const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
       let idx = 0;
 
       function speakClause() {
+        if (thisSessionId !== speechSessionId) return;
+
         if (idx >= sentences.length) {
           isSpeaking = false;
+          speechEndTime = Date.now();
           currentSpeakingClause = "";
           document.body.classList.remove('speaking');
           updateState("AURA // LISTENING (HANDS-FREE)", "listening");
-          if (handsFreeActive) startRecognition();
+
+          // Retain fullSpokenText for 1200ms to absorb trailing acoustic reflections
+          setTimeout(() => {
+            if (thisSessionId === speechSessionId) {
+              fullSpokenText = "";
+            }
+          }, 1200);
+
+          if (handsFreeActive && !isMuted) {
+            startRecognition();
+          }
           if (onComplete) onComplete();
           return;
         }
@@ -1034,27 +1122,42 @@
         const utterance = new SpeechSynthesisUtterance(clause);
         if (selectedVoice) utterance.voice = selectedVoice;
 
-        const pitchVal = parseFloat(document.getElementById('pitchSlider').value) || 1.06;
+        const pitchVal = parseFloat(document.getElementById('pitchSlider')?.value) || 1.06;
         utterance.pitch = pitchVal;
         utterance.rate = 1.0; // Natural conversational tempo
 
         utterance.onstart = () => {
+          if (thisSessionId !== speechSessionId) return;
           isSpeaking = true;
           currentSpeakingClause = clause.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
           document.body.classList.add('speaking');
-          updateState("AURA // SPEAKING (SPEAK TO INTERRUPT)", "speaking");
+          document.body.classList.remove('listening');
+          updateState("AURA // SPEAKING (SAY 'STOP' TO INTERRUPT)", "speaking");
         };
 
         utterance.onend = () => {
+          if (thisSessionId !== speechSessionId) return;
           // 120ms human breathing pause between thoughts
           setTimeout(speakClause, 120);
         };
 
-        utterance.onerror = () => {
+        utterance.onerror = (e) => {
+          if (thisSessionId !== speechSessionId) return;
+          // If canceled by user or interruptAI, do NOT advance or speak subsequent clauses
+          if (e.error === 'canceled' || e.error === 'interrupted') {
+            isSpeaking = false;
+            document.body.classList.remove('speaking');
+            return;
+          }
           speakClause();
         };
 
-        window.speechSynthesis.speak(utterance);
+        try {
+          window.speechSynthesis.speak(utterance);
+        } catch(err) {
+          console.warn("SpeechSynthesis error:", err);
+          speakClause();
+        }
       }
 
       speakClause();
@@ -1064,103 +1167,165 @@
     //  CONTINUOUS SPEECH RECOGNITION & FULL-DUPLEX BARGE-IN
     // ============================================================
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
 
-      recognition.onstart = () => {
-        isListening = true;
-        document.body.classList.add('listening');
-        if (!isSpeaking) {
-          updateState("AURA // LISTENING... (SPEAK FREELY)", "listening");
+    function initSpeechEngine() {
+      if (!SpeechRecognition) {
+        updateState("VOICE NOT SUPPORTED IN BROWSER", "");
+        return;
+      }
+
+      try {
+        if (recognition) {
+          try { recognition.abort(); } catch(e){}
         }
-      };
 
-      recognition.onresult = (event) => {
-        let interim = '';
-        let final = '';
+        recognition = new SpeechRecognition();
+        // On mobile devices (Android/iOS), continuous: false with debounced onend restart is rock-solid
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        recognition.continuous = !isMobile;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        recognition.maxAlternatives = 1;
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript;
-          } else {
-            interim += event.results[i][0].transcript;
+        recognition.onstart = () => {
+          isStartingRecognition = false;
+          isListening = true;
+          document.body.classList.add('listening');
+          const micIcon = document.getElementById('micIcon');
+          if (micIcon) micIcon.textContent = "🎙️";
+          if (!isSpeaking) {
+            updateState("AURA // LISTENING... (SPEAK FREELY)", "listening");
           }
-        }
+        };
 
-        const heard = (interim || final).toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+        recognition.onresult = (event) => {
+          let interim = '';
+          let final = '';
 
-        // FULL-DUPLEX BARGE-IN: If user speaks while AI is speaking, cut off immediately!
-        if (isSpeaking && heard.length > 0) {
-          const isEcho = currentSpeakingClause && currentSpeakingClause.includes(heard) && heard.split(' ').length <= 2;
-          if (!isEcho) {
-            window.speechSynthesis.cancel();
-            isSpeaking = false;
-            currentSpeakingClause = "";
-            document.body.classList.remove('speaking');
-            updateState("AURA // INTERRUPTED — LISTENING...", "listening");
-            document.getElementById('captionBox').textContent = `"${interim || final}..."`;
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              final += event.results[i][0].transcript;
+            } else {
+              interim += event.results[i][0].transcript;
+            }
           }
-        }
 
-        // Live Subtitle Display
-        if (interim && !isSpeaking) {
-          document.getElementById('captionBox').textContent = `"${interim}..."`;
-        }
+          const rawHeard = (interim || final).trim();
+          const heardClean = rawHeard.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+          if (!heardClean) return;
 
-        // Final speech command captured
-        if (final.trim()) {
-          const query = final.trim();
-          // Filter out echo of what AI was uttering
-          if (currentSpeakingClause && currentSpeakingClause.includes(query.toLowerCase()) && query.split(' ').length <= 2) {
+          // FULL-DUPLEX BARGE-IN: If user speaks while AI is speaking
+          if (isSpeaking) {
+            // Ignore speaker transient bursts during initial 600ms
+            if (Date.now() - speechStartTime < 600) {
+              return;
+            }
+
+            // Check if heard words are acoustic feedback from device speakers
+            if (isAIEcho(heardClean)) {
+              return; // Filtered: device speaker audio echo
+            }
+
+            // Genuine human barge-in!
+            interruptAI();
+            setCaption(`"${rawHeard}..."`);
             return;
           }
-          setCaption(`"${query}"`);
-          addDialogMessage(query, "user");
-          processIntelligentQuery(query);
-        }
-      };
 
-      recognition.onerror = (e) => {
-        if (e.error !== 'no-speech') {
-          console.log("Speech recognition status:", e.error);
-        }
-      };
+          // Live Subtitle Display during user speech
+          if (interim) {
+            setCaption(`"${interim}..."`);
+          }
 
-      recognition.onend = () => {
-        isListening = false;
-        document.body.classList.remove('listening');
-        // Seamless continuous hands-free loop
-        if (handsFreeActive && !isMuted) {
-          setTimeout(() => {
-            if (!isListening) {
-              try { recognition.start(); } catch(e){}
+          // Final speech command captured
+          if (final.trim()) {
+            const query = final.trim();
+            // Filter out trailing echo if speech just ended
+            if (isAIEcho(query)) {
+              console.log("Filtered trailing speech echo:", query);
+              return;
             }
-          }, 200);
-        }
-      };
+
+            setCaption(`"${query}"`);
+            addDialogMessage(query, "user");
+            processIntelligentQuery(query);
+          }
+        };
+
+        recognition.onerror = (e) => {
+          isStartingRecognition = false;
+          if (e.error === 'no-speech' || e.error === 'aborted') {
+            return;
+          }
+          console.log("Speech recognition status:", e.error);
+          if (e.error === 'not-allowed') {
+            updateState("⚠️ MIC ACCESS BLOCKED — TAP TO ALLOW", "");
+            handsFreeActive = false;
+          } else if (e.error === 'audio-capture') {
+            updateState("MIC HARDWARE BUSY — RETRYING...", "");
+          } else if (e.error === 'network') {
+            updateState("NETWORK GLITCH — RECONNECTING...", "");
+          }
+        };
+
+        recognition.onend = () => {
+          isStartingRecognition = false;
+          isListening = false;
+          document.body.classList.remove('listening');
+
+          // Seamless continuous hands-free loop
+          if (handsFreeActive && !isMuted) {
+            clearTimeout(restartTimeoutId);
+            restartTimeoutId = setTimeout(() => {
+              if (handsFreeActive && !isMuted && !isListening && !isStartingRecognition) {
+                startRecognition();
+              }
+            }, 250);
+          }
+        };
+      } catch (err) {
+        console.error("SpeechRecognition initialization failed:", err);
+      }
     }
 
     function startRecognition() {
+      if (!recognition) {
+        initSpeechEngine();
+      }
       if (!recognition) return;
-      if (isListening) return;
+      if (isListening || isStartingRecognition || isMuted) return;
+
       try {
+        isStartingRecognition = true;
         recognition.start();
-      } catch (e){}
+      } catch (e) {
+        isStartingRecognition = false;
+        if (e.name === 'InvalidStateError') {
+          try { recognition.stop(); } catch(err){}
+          setTimeout(() => {
+            if (handsFreeActive && !isListening && !isMuted) {
+              try { recognition.start(); } catch(err){}
+            }
+          }, 300);
+        }
+      }
     }
 
     function toggleListening() {
       if (isListening) {
         handsFreeActive = false;
-        if (recognition) recognition.stop();
-        if (isSpeaking) window.speechSynthesis.cancel();
+        if (recognition) {
+          try { recognition.stop(); } catch(e){}
+        }
+        if (isSpeaking) {
+          interruptAI();
+        }
         isSpeaking = false;
-        updateState("AURA // PAUSED", "");
+        updateState("AURA // PAUSED — TAP MIC TO RESUME", "");
       } else {
         handsFreeActive = true;
         isMuted = false;
+        primeAudioHardware();
         startRecognition();
       }
     }
@@ -1171,8 +1336,10 @@
       if (isMuted) {
         btn.textContent = "🔇";
         btn.style.color = "#FF4B4B";
-        if (recognition) recognition.stop();
-        updateState("MIC MUTED", "");
+        if (recognition) {
+          try { recognition.stop(); } catch(e){}
+        }
+        updateState("MIC MUTED (TAP 🔇 TO UNMUTE)", "");
       } else {
         btn.textContent = "🎤";
         btn.style.color = "#94A3B8";
@@ -1180,26 +1347,51 @@
       }
     }
 
-    function handleStageClick() {
-      // Screen click primes audio hardware and context
+    function handleStageClick(e) {
+      if (e && e.target && e.target.closest && e.target.closest('.yt-deck, .interrupt-btn, button, input')) {
+        return;
+      }
       primeAudioHardware();
       if (isSpeaking) {
         interruptAI();
       } else if (!isListening) {
+        handsFreeActive = true;
+        isMuted = false;
         startRecognition();
       }
     }
 
     function primeAudioHardware() {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        const c = new AudioCtx();
-        c.resume();
-      }
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-        }).catch(() => {});
+      // 1. Resume AudioContext for browser autoplay policies
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          if (!window._audioContext) {
+            window._audioContext = new AudioCtx();
+          }
+          if (window._audioContext.state === 'suspended') {
+            window._audioContext.resume();
+          }
+        }
+      } catch (e) {}
+
+      // 2. Request mic permission cleanly once without keeping audio track locks open
+      if (!micPermRequested && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        micPermRequested = true;
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            // CRITICAL: Stop tracks immediately so SpeechRecognition has free, exclusive access to microphone
+            stream.getTracks().forEach(track => track.stop());
+            if (handsFreeActive && !isListening && !isSpeaking) {
+              startRecognition();
+            }
+          })
+          .catch(err => {
+            console.warn("Microphone access prompt:", err);
+            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+              updateState("⚠️ MIC PERMISSION DENIED — ALLOW IN BROWSER", "");
+            }
+          });
       }
     }
 
@@ -1439,12 +1631,25 @@
       }
 
       // 2. Play / Pause Commands & Screen touch/click
-      if (text === "pause" || text === "pause music" || text === "pause video" || text === "stop music" || text === "stop video") {
+      if (text === "pause" || text === "pause music" || text === "pause video" || text === "stop music" || text === "stop video" || text === "stop playing") {
         pauseYt();
         const reply = "Paused playback.";
         setCaption(reply);
         addDialogMessage(reply, "agent");
         speakHuman(reply);
+        return;
+      }
+
+      if (text === "stop" || text === "stop it" || text === "shut up") {
+        if (isYtPlaying) {
+          pauseYt();
+          const reply = "Stopped playback.";
+          setCaption(reply);
+          addDialogMessage(reply, "agent");
+          speakHuman(reply);
+          return;
+        }
+        interruptAI();
         return;
       }
 
@@ -1703,13 +1908,23 @@
       document.getElementById('textDrawer').classList.toggle('open');
     }
 
-    // Start listening on first user interaction
-    window.addEventListener('click', () => {
+    // Start listening on first user gesture (touch, click, keydown)
+    function primeOnce() {
+      if (hasPrimed) return;
+      hasPrimed = true;
       primeAudioHardware();
       if (handsFreeActive && !isListening && !isSpeaking) {
         startRecognition();
       }
-    }, { once: true });
+    }
+
+    window.addEventListener('click', primeOnce, { passive: true });
+    window.addEventListener('touchstart', primeOnce, { passive: true });
+    window.addEventListener('pointerdown', primeOnce, { passive: true });
+    window.addEventListener('keydown', primeOnce, { passive: true });
+
+    // Initialize speech recognition engine on load
+    initSpeechEngine();
   </script>
 </body>
 </html>
