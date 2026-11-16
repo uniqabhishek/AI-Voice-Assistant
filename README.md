@@ -3,6 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Live Web Demo](https://img.shields.io/badge/Live_App-Test_In_Browser-00F0FF?style=for-the-badge&logo=safari&logoColor=black)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
 [![Mode](https://img.shields.io/badge/Mode-Gemini_Live_Barge--In-00FF9D?style=for-the-badge)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
+[![Bilingual](https://img.shields.io/badge/Language-Bilingual_(Hindi_%2B_English)-FF9933?style=for-the-badge&logo=google-translate&logoColor=white)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
 [![Audio Engine](https://img.shields.io/badge/Audio-YouTube_Voice_Stream-FF0033?style=for-the-badge&logo=youtube&logoColor=white)](https://uniqabhishek.github.io/AI-Voice-Assistant/)
 [![Deepgram](https://img.shields.io/badge/Voice_Agent-Deepgram_Nova--2_%26_Aura-13EF95?style=for-the-badge&logo=deepgram&logoColor=black)](https://deepgram.com/)
 [![Groq](https://img.shields.io/badge/LLM_Inference-Groq_LPU-F55036?style=for-the-badge&logo=fastapi&logoColor=white)](https://groq.com/)
@@ -44,10 +45,13 @@ sequenceDiagram
 ## 🚀 Key Highlights & Capabilities
 
 - **ChatGPT-4o & Gemini Live Experience ([Test Live](https://uniqabhishek.github.io/AI-Voice-Assistant/))**:
-  - **Full-Duplex Speech Barge-In**: Never wait for the agent to finish talking; speak naturally at any moment to interrupt instantly (`window.speechSynthesis.cancel()`).
+  - **Simultaneous Bilingual Auto-Detection (Hindi & English)**: Real-time dual-language engine automatically detecting whether the user spoke in Hindi (Devanagari script or Romanized Hinglish) or English. Dynamically routes to natural Hindi female voice (`selectedHindiVoice` e.g., *Google हिन्दी*, *Microsoft Swara Online Natural*) or natural English female voice (`selectedEnglishVoice` e.g., *Microsoft Jenny Online Natural*, *Google US English*). Uses Hindi purna viram (`।`) sentence splitting with 120ms human breathing intervals.
+  - **Full-Duplex Speech Barge-In (Instant Interruption)**: Never wait for the agent to finish talking; speak naturally at any moment in Hindi or English (say *"रुको"* or *"stop"*) or tap anywhere to interrupt instantly (`window.speechSynthesis.cancel()`).
+  - **Acoustic Echo Cancellation (AEC) & Self-Barge-In Filter**: Real-time token overlap filter (`isAIEcho`) preventing speaker audio feedback from self-interrupting the agent while maintaining instant interruptability on user speech.
   - **Fluid Morphing Neural Orb**: 64-point harmonic Canvas visualizer dynamically reacting to speech frequencies across Cyan/Emerald (listening), Magenta/Purple (speaking), and Coral Red (streaming) states.
-  - **Dynamic YouTube Voice Streaming**: Instant hands-free streaming (*"Play Believer"*, *"Play Hanuman Chalisa"*, *"Play Arijit Singh"*) with voice playback controls (*"Pause"*, *"Resume"*, *"Play"*).
-  - **Multi-Tier Intelligence Brain**: Combines Wikipedia REST API for instant real-time definitions, fast Cloud LLM for open creativity, a 50+ topic local conversational matrix, and Groq LPU Llama-3.3-70B acceleration.
+  - **Dynamic YouTube Voice Streaming**: Instant hands-free streaming (*"Play Believer"*, *"केसरीया गाना बजाओ"*, *"हनुमान चालीसा चलाओ"*, *"Play Arijit Singh"*) with voice playback controls (*"Pause"*, *"Resume"*, *"गाना रोको"*, *"चलाओ"*).
+  - **Multi-Tier Intelligence Brain**: Combines Wikipedia REST API (Hindi & English) for instant real-time definitions, fast Cloud LLM for open creativity, a 50+ topic local conversational matrix, and Groq LPU Llama-3.3-70B acceleration.
+  - **Top Navigation Language Pill**: 1-tap toggling between `🌐 Auto (हिन्दी + Eng)`, `🇮🇳 हिन्दी (Hindi Only)`, and `🇺🇸 English Only`.
 - **Sub-Second Voice-to-Voice Latency**: Combines Deepgram's streaming STT/TTS with Groq's high-throughput LPU inference (500+ tok/sec) to achieve realistic, conversational dialogue speed without awkward pauses.
 - **Full-Duplex WebSocket Audio Bridge**: Custom `/ws/voice` gateway built on `flask-sock` handling bidirectional binary audio frames, user transcripts, and agent events.
 - **Hybrid Intelligence Architecture**:
